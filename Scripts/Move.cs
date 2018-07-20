@@ -211,27 +211,28 @@ public class Move : MonoBehaviour {
 
                     switch (sideMove) {
                         case "L": {
-                                if (((((UY > blockL_DY && UY < blockL_UY) || (DY > blockL_DY && DY < blockL_UY)) && (LX < blockL_RX)) && Map.MapArr[blockL_X, blockL_Y] != '!') ||
-                                (((UY > blockLU_DY && UY < blockLU_UY) && (LX < blockLU_RX)) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
-                                (((DY > blockLD_DY && DY < blockLD_UY) && (LX < blockLD_RX)) && Map.MapArr[blockLD_X, blockLD_Y] != '!')) return false;
+                                Debug.Log(UY + " " + blockL_DY + " " + blockL_UY + " " + DY + "|" + LX + "<" + blockL_RX + " && " + Map.MapArr[blockL_X, blockL_Y]);
+                                if ((((UY > blockL_DY && UY < blockL_UY) || (DY > blockL_DY && DY < blockL_UY)) && (LX < blockL_RX) && (Mathf.Abs(LX - Map.calibrationX(blockL_RX)) < 1) && Map.MapArr[blockL_X, blockL_Y] != '!') ||
+                                ((UY > blockLU_DY && UY < blockLU_UY) && (LX < blockLU_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLU_RX)) < 1) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
+                                ((DY > blockLD_DY && DY < blockLD_UY) && (LX < blockLD_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLD_RX)) < 1) && Map.MapArr[blockLD_X, blockLD_Y] != '!')) return false;
                                 else return true;
                             }
                         case "R": {
-                                if (((((UY > blockR_DY && UY < blockR_UY) || (DY > blockR_DY && DY < blockR_UY)) && (RX > blockR_LX)) && Map.MapArr[blockR_X, blockR_Y] != '!') ||
-                                (((UY > blockRU_DY && UY < blockRU_UY) && (RX > blockRU_LX)) && Map.MapArr[blockRU_X, blockRU_Y] != '!') ||
-                                (((DY > blockRD_DY && DY < blockRD_UY) && (RX > blockRD_LX)) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
+                                if ((((UY > blockR_DY && UY < blockR_UY) || (DY > blockR_DY && DY < blockR_UY)) && (RX > Map.calibrationX(blockR_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockR_LX)) < 1) && Map.MapArr[blockR_X, blockR_Y] != '!') ||
+                                ((UY > blockRU_DY && UY < blockRU_UY) && (RX > Map.calibrationX(blockRU_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockRU_LX)) < 1) && Map.MapArr[blockRU_X, blockRU_Y] != '!') ||
+                                ((DY > blockRD_DY && DY < blockRD_UY) && (RX > Map.calibrationX(blockRD_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockRD_LX)) < 1) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
                                 else return true;
                             }
                         case "U": {
-                                if (((((LX > blockU_LX && LX < blockU_RX) || (RX > blockU_LX && RX < blockU_RX)) && (UY > blockU_DY)) && Map.MapArr[blockU_X, blockU_Y] != '!') ||
-                                (((LX > blockLU_LX && LX < blockLU_RX) && (UY > blockLU_DY)) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
-                                (((RX > blockRU_LX && RX < blockRU_RX) && (UY > blockRU_DY)) && Map.MapArr[blockRU_X, blockRU_Y] != '!')) return false;
+                                if ((((LX > blockU_LX && LX < blockU_RX) || (RX > blockU_LX && RX < blockU_RX)) && (UY > Map.calibrationY(blockU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockU_DY)) < 1) && Map.MapArr[blockU_X, blockU_Y] != '!') ||
+                                ((LX > blockLU_LX && LX < blockLU_RX) && (UY > Map.calibrationY(blockLU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockLU_DY)) < 1) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
+                                ((RX > blockRU_LX && RX < blockRU_RX) && (UY > Map.calibrationY(blockRU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockRU_DY)) < 1) && Map.MapArr[blockRU_X, blockRU_Y] != '!')) return false;
                                 else return true;
                             }
                         case "D": {
-                                if (((((LX > blockD_LX && LX < blockD_RX) || (RX > blockD_LX && RX < blockD_RX)) && (DY < blockD_UY)) && Map.MapArr[blockD_X, blockD_Y] != '!') ||
-                                (((LX > blockLD_LX && LX < blockLD_RX) && (DY < blockLD_UY)) && Map.MapArr[blockLD_X, blockLD_Y] != '!') ||
-                                (((RX > blockRD_LX && RX < blockRD_RX) && (DY < blockRD_UY)) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
+                                if ((((LX > blockD_LX && LX < blockD_RX) || (RX > blockD_LX && RX < blockD_RX)) && (DY < blockD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockD_UY)) < 1) && Map.MapArr[blockD_X, blockD_Y] != '!') ||
+                                ((LX > blockLD_LX && LX < blockLD_RX) && (DY < blockLD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockLD_UY)) < 1) && Map.MapArr[blockLD_X, blockLD_Y] != '!') ||
+                                ((RX > blockRD_LX && RX < blockRD_RX) && (DY < blockRD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockRD_UY)) < 1) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
                                 else return true;
                             }
                     }
