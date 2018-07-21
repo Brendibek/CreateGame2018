@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 public class ServerController : MonoBehaviour {
     public GameObject playerGO;
     public GameObject otherPlayerGO;
+    public GameObject otherPlayersGO;
 
     Dictionary<int, GameObject> otherPlayers = new Dictionary<int, GameObject>();
 
@@ -22,7 +23,10 @@ public class ServerController : MonoBehaviour {
     string serverMessage = string.Empty;
 
     void Awake(){
-		//client = new TcpClient ("127.0.0.1", 4000);
+        //добавление игровых объектов на сцену
+        otherPlayersGO = Instantiate(otherPlayersGO);
+
+        //client = new TcpClient ("127.0.0.1", 4000);
         client = new TcpClient ("109.234.38.91", 4000);
     }
 
@@ -62,9 +66,9 @@ public class ServerController : MonoBehaviour {
                 case 1: {
                         int playerId = (int)objFromServer.GetValue("playerId");
                         if (!otherPlayers.ContainsKey(playerId)) {
-                            GameObject test = Instantiate(otherPlayerGO);
-                            otherPlayers.Add(playerId, test);
-                            test.transform.parent = GameObject.Find("OtherPlayers").transform;
+                            GameObject otherPlayerGON = Instantiate(otherPlayerGO);
+                            otherPlayers.Add(playerId, otherPlayerGON);
+                            otherPlayerGON.transform.parent = otherPlayersGO.transform;
                         }
                         OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
                         optionsOtherPlayer.playerId = playerId;

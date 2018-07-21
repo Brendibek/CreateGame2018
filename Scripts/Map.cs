@@ -4,10 +4,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 public class Map : MonoBehaviour {
-    public static int mapWidth = 128, mapHeight = 128, blockSize = 16, nWidth, nHeight;
+    public static int mapWidth = 128, mapHeight = 128, blockSize = 8, nWidth, nHeight;
     public GameObject chunks, sprite;
     public static Dictionary<int, GameObject> listChunk = new Dictionary<int, GameObject>();
-    public static char[,] MapArr = new char[mapWidth, mapHeight]; 
+    public static char[,] MapArr = new char[mapWidth, mapHeight];
+
+    void Awake() {
+        //добавление игровых объектов на сцену start
+        chunks = Instantiate(chunks);
+    }
 
     void Start() {
         nWidth = mapWidth / blockSize;

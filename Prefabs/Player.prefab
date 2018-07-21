@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.03
-  mapGO: {fileID: 0}
+  mapGO: {fileID: 1282739811163890, guid: 949201494f8631b43bbcfcb1125d2e5a, type: 2}
 --- !u!124 &124525862631900932
 Behaviour:
   m_ObjectHideFlags: 1

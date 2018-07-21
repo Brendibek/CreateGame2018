@@ -13,14 +13,16 @@ public class Move : MonoBehaviour {
     Map map;
     bool first = true;
 
-    void Start() {
-        mapGO = GameObject.Find("Map");
-        map = mapGO.GetComponent<Map>();
+    void Awake() {
+        //добавление игровых объектов на сцену start
+        mapGO = Instantiate(mapGO);
+
+        dspeed = Mathf.Sqrt((speed * speed) / 2);
     }
 
-    void Awake() {
-        dspeed = Mathf.Sqrt((speed * speed) / 2);
-    } 
+    void Start() {
+        map = mapGO.GetComponent<Map>();
+    }
 
 	void FixedUpdate () {
         if (Player.connect) {
@@ -63,7 +65,7 @@ public class Move : MonoBehaviour {
                     else Player.y -= (Player.y - 0.75f) - Mathf.FloorToInt(Player.y);
                     Player.position = "RD";
                 } else if (left && !right) {
-                    if(collision("L", speed, "mapBlock")) Player.x -= speed;
+                    if (collision("L", speed, "mapBlock")) Player.x -= speed;
                     else Player.x -= (Player.x - 0.75f) - Mathf.FloorToInt(Player.x);
                     Player.position = "L";
                 } else if (right && !left) {
@@ -83,29 +85,19 @@ public class Move : MonoBehaviour {
                 float loc1 = Mathf.Floor(Player.blockId % Map.nWidth) * Map.blockSize;
                 float loc2 = Mathf.Floor(Player.blockId / Map.nWidth) * Map.blockSize;
 
-                float xDraw = Player.x;
-                if ((xDraw >= Map.mapWidth) || (xDraw < 0)) xDraw -= Mathf.Floor(xDraw / Map.mapWidth) * Map.mapWidth;
-                float rightBorder = loc1 + Map.blockSize + 6;
-                if ((rightBorder >= Map.mapWidth) || (rightBorder < 0)) rightBorder -= Mathf.Floor(rightBorder / Map.mapWidth) * Map.mapWidth;
-                float leftBorder = loc1 - 6;
-                if ((leftBorder >= Map.mapWidth) || (leftBorder < 0)) leftBorder -= Mathf.Floor(leftBorder / Map.mapWidth) * Map.mapWidth;
+                float rightBorder = loc1 + Map.blockSize;
+                float leftBorder = loc1;
+                float upBorder = loc2 + Map.blockSize;
+                float downBorder = loc2;
 
-                float yDraw = Player.y;
-                if ((yDraw >= Map.mapHeight) || (yDraw < 0)) yDraw -= Mathf.Floor(yDraw / Map.mapHeight) * Map.mapHeight;
-                float upBorder = loc2 + Map.blockSize + 6;
-                if ((upBorder >= Map.mapHeight) || (upBorder < 0)) upBorder -= Mathf.Floor(upBorder / Map.mapHeight) * Map.mapHeight;
-                float downBorder = loc2 - 6;
-                if ((downBorder >= Map.mapHeight) || (downBorder < 0)) downBorder -= Mathf.Floor(downBorder / Map.mapHeight) * Map.mapHeight;
-
-                Player.x = Map.calibrationX(Player.x);
-                Player.y = Map.calibrationY(Player.y);
-
-                if (((xDraw <= leftBorder) && (Mathf.Abs(leftBorder - xDraw) < 1) && left) ||
-                    ((xDraw >= rightBorder) && (Mathf.Abs(rightBorder - xDraw) < 1) && right) ||
-                    ((yDraw <= downBorder) && (Mathf.Abs(downBorder - yDraw) < 1) && down) ||
-                    ((yDraw >= upBorder) && (Mathf.Abs(upBorder - yDraw) < 1) && up)) {
+                if (((Player.x <= leftBorder) && (Mathf.Abs(leftBorder - Player.x) < 1) && left) ||
+                    ((Player.x >= rightBorder) && (Mathf.Abs(rightBorder - Player.x) < 1) && right) ||
+                    ((Player.y <= downBorder) && (Mathf.Abs(downBorder - Player.y) < 1) && down) ||
+                    ((Player.y >= upBorder) && (Mathf.Abs(upBorder - Player.y) < 1) && up)) {
                     map.updateChunks(Player.x, Player.y, "calc");
                 }
+                Player.x = Map.calibrationX(Player.x);
+                Player.y = Map.calibrationY(Player.y);
 
                 if ((this.gameObject.transform.position.x != Player.x) || (this.gameObject.transform.position.y != Player.y)) {
                     this.gameObject.transform.position = new Vector2(Player.x, Player.y);
@@ -211,7 +203,6 @@ public class Move : MonoBehaviour {
 
                     switch (sideMove) {
                         case "L": {
-                                Debug.Log(UY + " " + blockL_DY + " " + blockL_UY + " " + DY + "|" + LX + "<" + blockL_RX + " && " + Map.MapArr[blockL_X, blockL_Y]);
                                 if ((((UY > blockL_DY && UY < blockL_UY) || (DY > blockL_DY && DY < blockL_UY)) && (LX < blockL_RX) && (Mathf.Abs(LX - Map.calibrationX(blockL_RX)) < 1) && Map.MapArr[blockL_X, blockL_Y] != '!') ||
                                 ((UY > blockLU_DY && UY < blockLU_UY) && (LX < blockLU_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLU_RX)) < 1) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
                                 ((DY > blockLD_DY && DY < blockLD_UY) && (LX < blockLD_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLD_RX)) < 1) && Map.MapArr[blockLD_X, blockLD_Y] != '!')) return false;
