@@ -13,9 +13,10 @@ public class ServerController : MonoBehaviour {
     public GameObject otherPlayersGO;
 
     Dictionary<int, GameObject> otherPlayers = new Dictionary<int, GameObject>();
+    List<GameObject>[,] playersInCells = new List<GameObject>[Map.mapWidth, Map.mapHeight];
 
-	private TcpClient client;
-	private NetworkStream stream;
+    private TcpClient client;
+    private NetworkStream stream;
     private StreamReader reader;
     public static StreamWriter writer;
     Thread threadListener;
@@ -24,6 +25,10 @@ public class ServerController : MonoBehaviour {
 
     void Awake(){
         //добавление игровых объектов на сцену
+        for (int i = 0; i < playersInCells.GetLength(0); i++)
+            for (int j = 0; j < playersInCells.GetLength(1); j++) 
+                playersInCells[i, j] = new List<GameObject>();
+
         otherPlayersGO = Instantiate(otherPlayersGO);
 
         //client = new TcpClient ("127.0.0.1", 4000);
@@ -65,16 +70,29 @@ public class ServerController : MonoBehaviour {
                     }
                 case 1: {
                         int playerId = (int)objFromServer.GetValue("playerId");
+
+                        bool isNew = false;
                         if (!otherPlayers.ContainsKey(playerId)) {
                             GameObject otherPlayerGON = Instantiate(otherPlayerGO);
                             otherPlayers.Add(playerId, otherPlayerGON);
                             otherPlayerGON.transform.parent = otherPlayersGO.transform;
+                            isNew = true;
                         }
+
                         OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
-                        optionsOtherPlayer.playerId = playerId;
-                        optionsOtherPlayer.playerName = objFromServer.GetValue("name").ToString();
+                        if (isNew) {
+                            optionsOtherPlayer.playerId = playerId;
+                            optionsOtherPlayer.playerName = objFromServer.GetValue("name").ToString();                    
+                        } else {
+                            if (playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Contains(otherPlayers[playerId]))
+                                playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Remove(otherPlayers[playerId]);
+                        }
                         optionsOtherPlayer.x = (float)objFromServer.GetValue("x");
                         optionsOtherPlayer.y = (float)objFromServer.GetValue("y");
+
+                        if (!playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Contains(otherPlayers[playerId]))
+                            playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Add(otherPlayers[playerId]);
+
                         //optionsOtherPlayer.position = objFromServer.GetValue("position").ToString();
                         break;
                     }
@@ -83,7 +101,6 @@ public class ServerController : MonoBehaviour {
                         break;
                     }
                 case 3: {
-                        Debug.Log(serverMessage);
                         JArray blocks = (JArray)objFromServer.GetValue("blocks");
                         Map.dataToMapArr(blocks);
                         break;
@@ -118,6 +135,8 @@ public class ServerController : MonoBehaviour {
 
     void deletePlayer(int playerId) { 
         if (otherPlayers.ContainsKey(playerId)) {
+            OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
+            playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Remove(otherPlayers[playerId]);
             Destroy(otherPlayers[playerId]);
             otherPlayers.Remove(playerId);
         }
