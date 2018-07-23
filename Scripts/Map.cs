@@ -118,16 +118,18 @@ public class Map : MonoBehaviour {
             JArray blockData = (JArray)block.GetValue("block");
             int x = getXbyBlockId(blockId);
             int y = getYbyBlockId(blockId);
-            GameObject chunk = listChunk[blockId];
-            for (int blockHeightN = 0; blockHeightN < blockData.Count; blockHeightN++) {
-                JArray blockHeight = (JArray)blockData[blockHeightN];
-                for (int blockWidthN = 0; blockWidthN < blockHeight.Count; blockWidthN++) {
-                    MapArr[x + blockWidthN, y + blockHeightN] = (char)blockHeight[blockWidthN];
-                    SpriteRenderer spriteR = chunk.transform.Find(blockWidthN + "_" + blockHeightN).GetComponent<SpriteRenderer>();
-                    if ((char)blockHeight[blockWidthN] == '9') spriteR.sprite = Textures.getSprite(x + blockWidthN,  y + blockHeightN, 0);
-                    if ((char)blockHeight[blockWidthN] == '!') spriteR.sprite = Textures.getSprite(x + blockWidthN, y + blockHeightN, 1);
+            if (listChunk.ContainsKey(blockId)) {
+                GameObject chunk = listChunk[blockId];
+                for (int blockHeightN = 0; blockHeightN < blockData.Count; blockHeightN++) {
+                    JArray blockHeight = (JArray)blockData[blockHeightN];
+                    for (int blockWidthN = 0; blockWidthN < blockHeight.Count; blockWidthN++) {
+                        MapArr[x + blockWidthN, y + blockHeightN] = (char)blockHeight[blockWidthN];
+                        SpriteRenderer spriteR = chunk.transform.Find(blockWidthN + "_" + blockHeightN).GetComponent<SpriteRenderer>();
+                        if ((char)blockHeight[blockWidthN] == '9') spriteR.sprite = Textures.getSprite(x + blockWidthN, y + blockHeightN, 0);
+                        if ((char)blockHeight[blockWidthN] == '!') spriteR.sprite = Textures.getSprite(x + blockWidthN, y + blockHeightN, 1);
+                    }
                 }
-            }
+            } 
         }
     }
 }

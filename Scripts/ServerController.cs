@@ -83,6 +83,7 @@ public class ServerController : MonoBehaviour {
                         break;
                     }
                 case 3: {
+                        Debug.Log(serverMessage);
                         JArray blocks = (JArray)objFromServer.GetValue("blocks");
                         Map.dataToMapArr(blocks);
                         break;
@@ -101,11 +102,10 @@ public class ServerController : MonoBehaviour {
                         break;
                     }
                 case 7: {
-                        //time 
-                        //мне hour minute
+                        Watch.hour = string.Format("{0:D2}", (int)objFromServer.GetValue("hour"));
+                        Watch.minute = string.Format("{0:D2}", (int)objFromServer.GetValue("minute"));
                         break;
                     }
-
             }
             serverMessage = string.Empty;
         }
@@ -126,6 +126,7 @@ public class ServerController : MonoBehaviour {
     void OnApplicationQuit() {
         reader.Close();
         writer.Close();
+        Application.Quit();
         //disconnect();
     }
 
