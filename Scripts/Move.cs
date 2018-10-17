@@ -4,232 +4,299 @@ using UnityEngine;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine.Tilemaps;
 
 public class Move : MonoBehaviour {
     public float speed = 0.05f;
     private float dspeed;
-    private bool left = false, right = false, up = false, down = false;
-    public GameObject mapGO;
-    Map map;
+    public bool left = false, right = false, up = false, down = false, joystick = false;
     bool first = true;
 
     void Awake() {
-        //добавление игровых объектов на сцену start
-        mapGO = Instantiate(mapGO);
-
         dspeed = Mathf.Sqrt((speed * speed) / 2);
     }
 
-    void Start() {
-        map = mapGO.GetComponent<Map>();
-    }
-
 	void FixedUpdate () {
-        if (Player.connect) {
+        if (Node.sPlayerClass.connect) {
             if (first) {
-                Player.blockId = Map.getBlockId(Player.x, Player.y);
-                map.updateChunks(Player.x, Player.y, "all");
-                this.gameObject.transform.position = new Vector2(Player.x, Player.y);
+                Node.sPlayerClass.blockId = Node.sMapClass.getBlockId(Node.sPlayerClass.x, Node.sPlayerClass.y);
+                Node.sMapClass.updateChunks(Node.sPlayerClass.x, Node.sPlayerClass.y, "all");
+                this.gameObject.transform.position = new Vector2(Node.sPlayerClass.x, Node.sPlayerClass.y);
                 first = false;
             } else {
-                Player.x = this.gameObject.transform.position.x;
-                Player.y = this.gameObject.transform.position.y;
+                Node.sPlayerClass.x = this.gameObject.transform.position.x;
+                Node.sPlayerClass.y = this.gameObject.transform.position.y;
 
-                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) left = true;
-                if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) right = true;
-                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) up = true;
-                if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) down = true;
+                if (!joystick) {
+                    if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) left = true;
+                    if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) right = true;
+                    if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) up = true;
+                    if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) down = true;
+                }
 
                 if(left && up) {
-                    if (collision("L", dspeed, "mapBlock")) Player.x -= dspeed;
-                    else Player.x -= (Player.x - 0.75f) - Mathf.FloorToInt(Player.x);
-                    if (collision("U", dspeed, "mapBlock")) Player.y += dspeed;
-                    else Player.y += Mathf.CeilToInt(Player.y) - (Player.y + 0.75f);
-                    Player.position = "LU";
+                    if (collision("L", dspeed, "mapBlock")) Node.sPlayerClass.x -= dspeed;
+                    else Node.sPlayerClass.x -= (Node.sPlayerClass.x - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.x);
+                    if (collision("U", dspeed, "mapBlock")) Node.sPlayerClass.y += dspeed;
+                    else Node.sPlayerClass.y += Mathf.CeilToInt(Node.sPlayerClass.y) - (Node.sPlayerClass.y + 0.51f);
+                    Node.sPlayerClass.position = "LU";
                 } else if (left && down) {
-                    if (collision("L", dspeed, "mapBlock")) Player.x -= dspeed;
-                    else Player.x -= (Player.x - 0.75f) - Mathf.FloorToInt(Player.x);
-                    if (collision("D", dspeed, "mapBlock")) Player.y -= dspeed;
-                    else Player.y -= (Player.y - 0.75f) - Mathf.FloorToInt(Player.y);
-                    Player.position = "LD";
+                    if (collision("L", dspeed, "mapBlock")) Node.sPlayerClass.x -= dspeed;
+                    else Node.sPlayerClass.x -= (Node.sPlayerClass.x - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.x);
+                    if (collision("D", dspeed, "mapBlock")) Node.sPlayerClass.y -= dspeed;
+                    else Node.sPlayerClass.y -= (Node.sPlayerClass.y - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.y);
+                    Node.sPlayerClass.position = "LD";
                 } else if (right && up) {
-                    if (collision("R", dspeed, "mapBlock")) Player.x += dspeed;
-                    else Player.x += Mathf.CeilToInt(Player.x) - (Player.x + 0.75f);
-                    if (collision("U", dspeed, "mapBlock")) Player.y += dspeed;
-                    else Player.y += Mathf.CeilToInt(Player.y) - (Player.y + 0.75f);
-                    Player.position = "RU";
+                    if (collision("R", dspeed, "mapBlock")) Node.sPlayerClass.x += dspeed;
+                    else Node.sPlayerClass.x += Mathf.CeilToInt(Node.sPlayerClass.x) - (Node.sPlayerClass.x + 0.75f);
+                    if (collision("U", dspeed, "mapBlock")) Node.sPlayerClass.y += dspeed;
+                    else Node.sPlayerClass.y += Mathf.CeilToInt(Node.sPlayerClass.y) - (Node.sPlayerClass.y + 0.51f);
+                    Node.sPlayerClass.position = "RU";
                 } else if (right && down) {
-                    if (collision("R", dspeed, "mapBlock")) Player.x += dspeed;
-                    else Player.x += Mathf.CeilToInt(Player.x) - (Player.x + 0.75f);
-                    if (collision("D", dspeed, "mapBlock")) Player.y -= dspeed;
-                    else Player.y -= (Player.y - 0.75f) - Mathf.FloorToInt(Player.y);
-                    Player.position = "RD";
+                    if (collision("R", dspeed, "mapBlock")) Node.sPlayerClass.x += dspeed;
+                    else Node.sPlayerClass.x += Mathf.CeilToInt(Node.sPlayerClass.x) - (Node.sPlayerClass.x + 0.75f);
+                    if (collision("D", dspeed, "mapBlock")) Node.sPlayerClass.y -= dspeed;
+                    else Node.sPlayerClass.y -= (Node.sPlayerClass.y - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.y);
+                    Node.sPlayerClass.position = "RD";
                 } else if (left && !right) {
-                    if (collision("L", speed, "mapBlock")) Player.x -= speed;
-                    else Player.x -= (Player.x - 0.75f) - Mathf.FloorToInt(Player.x);
-                    Player.position = "L";
+                    if (collision("L", speed, "mapBlock")) Node.sPlayerClass.x -= speed;
+                    else Node.sPlayerClass.x -= (Node.sPlayerClass.x - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.x);
+                    Node.sPlayerClass.position = "L";
                 } else if (right && !left) {
-                    if (collision("R", speed, "mapBlock")) Player.x += speed;
-                    else Player.x += Mathf.CeilToInt(Player.x) - (Player.x + 0.75f);
-                    Player.position = "R";
+                    if (collision("R", speed, "mapBlock")) Node.sPlayerClass.x += speed;
+                    else Node.sPlayerClass.x += Mathf.CeilToInt(Node.sPlayerClass.x) - (Node.sPlayerClass.x + 0.75f);
+                    Node.sPlayerClass.position = "R";
                 } else if (up && !down) {
-                    if (collision("U", speed, "mapBlock")) Player.y += speed;
-                    else Player.y += Mathf.CeilToInt(Player.y) - (Player.y + 0.75f);
-                    Player.position = "U";
+                    if (collision("U", speed, "mapBlock")) Node.sPlayerClass.y += speed;
+                    else Node.sPlayerClass.y += Mathf.CeilToInt(Node.sPlayerClass.y) - (Node.sPlayerClass.y + 0.51f);
+                    Node.sPlayerClass.position = "U";
                 } else if (down && !up) {
-                    if (collision("D", speed, "mapBlock")) Player.y -= speed;
-                    else Player.y -= (Player.y - 0.75f) - Mathf.FloorToInt(Player.y);
-                    Player.position = "D";
+                    if (collision("D", speed, "mapBlock")) Node.sPlayerClass.y -= speed;
+                    else Node.sPlayerClass.y -= (Node.sPlayerClass.y - 0.75f) - Mathf.FloorToInt(Node.sPlayerClass.y);
+                    Node.sPlayerClass.position = "D";
                 }
 
-                float loc1 = Mathf.Floor(Player.blockId % Map.nWidth) * Map.blockSize;
-                float loc2 = Mathf.Floor(Player.blockId / Map.nWidth) * Map.blockSize;
+                float loc1 = Mathf.Floor(Node.sPlayerClass.blockId % Node.sMapClass.nWidth) * Node.sMapClass.blockSize;
+                float loc2 = Mathf.Floor(Node.sPlayerClass.blockId / Node.sMapClass.nWidth) * Node.sMapClass.blockSize;
 
-                float rightBorder = loc1 + Map.blockSize;
+                float rightBorder = loc1 + Node.sMapClass.blockSize;
                 float leftBorder = loc1;
-                float upBorder = loc2 + Map.blockSize;
+                float upBorder = loc2 + Node.sMapClass.blockSize;
                 float downBorder = loc2;
 
-                if (((Player.x <= leftBorder) && (Mathf.Abs(leftBorder - Player.x) < 1) && left) ||
-                    ((Player.x >= rightBorder) && (Mathf.Abs(rightBorder - Player.x) < 1) && right) ||
-                    ((Player.y <= downBorder) && (Mathf.Abs(downBorder - Player.y) < 1) && down) ||
-                    ((Player.y >= upBorder) && (Mathf.Abs(upBorder - Player.y) < 1) && up)) {
-                    map.updateChunks(Player.x, Player.y, "calc");
+                if (((Node.sPlayerClass.x <= leftBorder) && (Mathf.Abs(leftBorder - Node.sPlayerClass.x) < 1) && left) ||
+                    ((Node.sPlayerClass.x >= rightBorder) && (Mathf.Abs(rightBorder - Node.sPlayerClass.x) < 1) && right) ||
+                    ((Node.sPlayerClass.y <= downBorder) && (Mathf.Abs(downBorder - Node.sPlayerClass.y) < 1) && down) ||
+                    ((Node.sPlayerClass.y >= upBorder) && (Mathf.Abs(upBorder - Node.sPlayerClass.y) < 1) && up)) {
+                    Node.sMapClass.updateChunks(Node.sPlayerClass.x, Node.sPlayerClass.y, "calc");
                 }
-                Player.x = Map.calibrationX(Player.x);
-                Player.y = Map.calibrationY(Player.y);
+                Node.sPlayerClass.x = Node.sMapClass.calibrationX(Node.sPlayerClass.x);
+                Node.sPlayerClass.y = Node.sMapClass.calibrationY(Node.sPlayerClass.y);
 
-                if ((this.gameObject.transform.position.x != Player.x) || (this.gameObject.transform.position.y != Player.y)) {
-                    this.gameObject.transform.position = new Vector2(Player.x, Player.y);
-
+                if ((this.gameObject.transform.position.x != Node.sPlayerClass.x) || (this.gameObject.transform.position.y != Node.sPlayerClass.y)) {
+                    if ((Mathf.Floor(this.gameObject.transform.position.x) != Mathf.Floor(Node.sPlayerClass.x)) || (Mathf.Floor(this.gameObject.transform.position.y) != Mathf.Floor(Node.sPlayerClass.y))) {
+                        Node.sMapClass.updateVisibleBlocks();
+                    }
+                    this.gameObject.transform.position = new Vector2(Node.sPlayerClass.x, Node.sPlayerClass.y);
                     JObject obj = new JObject();
                     obj.Add(new JProperty("id", ServerController.Operation.sendMyXY));
-                    obj.Add(new JProperty("x", Player.x));
-                    obj.Add(new JProperty("y", Player.y));
-                    obj.Add(new JProperty("position", Player.position));
+                    obj.Add(new JProperty("x", Node.sPlayerClass.x));
+                    obj.Add(new JProperty("y", Node.sPlayerClass.y));
+                    obj.Add(new JProperty("position", Node.sPlayerClass.position));
                     ServerController.send(obj);
                 }
 
-                if ((left == true) && (Input.GetKey(KeyCode.A) == false) && (Input.GetKey(KeyCode.LeftArrow) == false)) left = false;
-                if ((right == true) && (Input.GetKey(KeyCode.D) == false) && (Input.GetKey(KeyCode.RightArrow) == false)) right = false;
-                if ((up == true) && (Input.GetKey(KeyCode.W) == false) && (Input.GetKey(KeyCode.UpArrow) == false)) up = false;
-                if ((down == true) && (Input.GetKey(KeyCode.S) == false) && (Input.GetKey(KeyCode.DownArrow) == false)) down = false;
+                if (!joystick) {
+                    if ((left == true) && (Input.GetKey(KeyCode.A) == false) && (Input.GetKey(KeyCode.LeftArrow) == false)) left = false;
+                    if ((right == true) && (Input.GetKey(KeyCode.D) == false) && (Input.GetKey(KeyCode.RightArrow) == false)) right = false;
+                    if ((up == true) && (Input.GetKey(KeyCode.W) == false) && (Input.GetKey(KeyCode.UpArrow) == false)) up = false;
+                    if ((down == true) && (Input.GetKey(KeyCode.S) == false) && (Input.GetKey(KeyCode.DownArrow) == false)) down = false;
+                }
             }
         }
     }
 
     private bool collision(string sideMove, float speed, string type) {
-        float shiftX = 0, shiftY = 0;
-        switch (sideMove) {
-            case "L": {
-                    shiftX = -speed;
-                    break;
-                }
-            case "R": {
-                    shiftX = +speed;
-                    break;
-                }
-            case "U": {
-                    shiftY = +speed;
-                    break;
-                }
-            case "D": {
-                    shiftY = -speed;
-                    break;
-                }
-            
-        }
-
-        float LX = Map.calibrationX(Player.x - 0.25f + shiftX);
-        float RX = Map.calibrationX(Player.x + 0.25f + shiftX);
-        float UY = Map.calibrationY(Player.y + 0.25f + shiftY);
-        float DY = Map.calibrationY(Player.y - 0.25f + shiftY);
-        
         switch (type) {
             case "mapBlock": {
-                    //0.5 из-за того что даются координаты центра объекта
-                    int blockL_X = Mathf.FloorToInt(Map.calibrationX(Player.x - 1 + 0.5f));
-                    int blockL_Y = Mathf.FloorToInt(Map.calibrationY(Player.y + 0.5f));
-                    float blockL_RX = blockL_X + 0.5f;
-                    float blockL_UY = blockL_Y + 0.5f;
-                    float blockL_DY = blockL_Y - 0.5f;
-                    
-                    int blockR_X = Mathf.FloorToInt(Map.calibrationX(Player.x + 1 + 0.5f));
-                    int blockR_Y = Mathf.FloorToInt(Map.calibrationY(Player.y + 0.5f));
-                    float blockR_LX = blockR_X - 0.5f;
-                    float blockR_UY = blockR_Y + 0.5f;
-                    float blockR_DY = blockR_Y - 0.5f;
-
-                    int blockU_X = Mathf.FloorToInt(Map.calibrationX(Player.x + 0.5f));
-                    int blockU_Y = Mathf.FloorToInt(Map.calibrationY(Player.y + 1 + 0.5f));
-                    float blockU_LX = blockU_X - 0.5f;
-                    float blockU_RX = blockU_X + 0.5f;
-                    float blockU_DY = blockU_Y - 0.5f;
-
-                    int blockD_X = Mathf.FloorToInt(Map.calibrationX(Player.x + 0.5f));
-                    int blockD_Y = Mathf.FloorToInt(Map.calibrationY(Player.y - 1 + 0.5f));
-                    float blockD_LX = blockD_X - 0.5f;
-                    float blockD_RX = blockD_X + 0.5f;
-                    float blockD_UY = blockD_Y + 0.5f;
-
-                    int blockLU_X = Mathf.FloorToInt(Map.calibrationX(Player.x - 1 + 0.5f));
-                    int blockLU_Y = Mathf.FloorToInt(Map.calibrationY(Player.y + 1 + 0.5f));
-                    float blockLU_LX = blockLU_X - 0.5f;
-                    float blockLU_RX = blockLU_X + 0.5f;
-                    float blockLU_UY = blockLU_Y + 0.5f;
-                    float blockLU_DY = blockLU_Y - 0.5f;
-
-                    int blockLD_X = Mathf.FloorToInt(Map.calibrationX(Player.x - 1 + 0.5f));
-                    int blockLD_Y = Mathf.FloorToInt(Map.calibrationY(Player.y - 1 + 0.5f));
-                    float blockLD_LX = blockLD_X - 0.5f;
-                    float blockLD_RX = blockLD_X + 0.5f;
-                    float blockLD_UY = blockLD_Y + 0.5f;
-                    float blockLD_DY = blockLD_Y - 0.5f;
-
-                    int blockRU_X = Mathf.FloorToInt(Map.calibrationX(Player.x + 1 + 0.5f));
-                    int blockRU_Y = Mathf.FloorToInt(Map.calibrationY(Player.y + 1 + 0.5f));
-                    float blockRU_LX = blockRU_X - 0.5f;
-                    float blockRU_RX = blockRU_X + 0.5f;
-                    float blockRU_UY = blockRU_Y + 0.5f;
-                    float blockRU_DY = blockRU_Y - 0.5f;
-
-                    int blockRD_X = Mathf.FloorToInt(Map.calibrationX(Player.x + 1 + 0.5f));
-                    int blockRD_Y = Mathf.FloorToInt(Map.calibrationY(Player.y - 1 + 0.5f));
-                    float blockRD_LX = blockRD_X - 0.5f;
-                    float blockRD_RX = blockRD_X + 0.5f;
-                    float blockRD_UY = blockRD_Y + 0.5f;
-                    float blockRD_DY = blockRD_Y - 0.5f;
-                    
-
+                    //return true;
                     switch (sideMove) {
                         case "L": {
-                                if ((((UY > blockL_DY && UY < blockL_UY) || (DY > blockL_DY && DY < blockL_UY)) && (LX < blockL_RX) && (Mathf.Abs(LX - Map.calibrationX(blockL_RX)) < 1) && Map.MapArr[blockL_X, blockL_Y] != '!') ||
-                                ((UY > blockLU_DY && UY < blockLU_UY) && (LX < blockLU_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLU_RX)) < 1) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
-                                ((DY > blockLD_DY && DY < blockLD_UY) && (LX < blockLD_RX) && (Mathf.Abs(LX - Map.calibrationX(blockLD_RX)) < 1) && Map.MapArr[blockLD_X, blockLD_Y] != '!')) return false;
+                                //обработка координат игрока
+                                float LX = Node.sMapClass.calibrationX(Node.sPlayerClass.x - 0.25f - speed);
+                                float UY = Node.sPlayerClass.y/* + 0.25f*/;
+                                float DY = Node.sPlayerClass.y - 0.25f;
+
+                                //обработка координат блока
+                                int blockL_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x - 1 + 0.5f));
+                                int blockL_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y + 0.5f));
+
+                                float blockL_LX, blockL_RX, blockL_UY, blockL_DY, blockLU_UY, blockLU_DY, blockLD_UY, blockLD_DY;
+                                blockL_RX = Node.sMapClass.calibrationX(blockL_X + 0.5f);
+                                blockL_LX = blockL_RX - 1;
+                                blockL_UY = blockL_Y + 0.5f;
+                                blockL_DY = blockL_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockL_Y) >= 2) {
+                                    if (blockL_UY >= 128) { blockL_UY = Node.sMapClass.calibrationY(blockL_UY); blockL_DY = blockL_UY - 1; }
+                                    else if (blockL_DY < 0) { blockL_DY = Node.sMapClass.calibrationY(blockL_DY); blockL_UY = blockL_DY + 1; }
+                                }
+
+                                int blockLU_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y + 1 + 0.5f));
+                                blockLU_UY = blockLU_Y + 0.5f;
+                                blockLU_DY = blockLU_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockLU_Y) >= 2) {
+                                    if (blockLU_UY >= 128) { blockLU_UY = Node.sMapClass.calibrationY(blockLU_UY); blockLU_DY = blockLU_UY - 1; }
+                                    else if (blockLU_DY < 0) { blockLU_DY = Node.sMapClass.calibrationY(blockLU_DY); blockLU_UY = blockLU_DY + 1; }
+                                }
+
+                                int blockLD_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y - 1 + 0.5f));
+                                blockLD_UY = blockLD_Y + 0.5f;
+                                blockLD_DY = blockLD_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockLD_Y) >= 2) {
+                                    if (blockLD_UY >= 128) { blockLD_UY = Node.sMapClass.calibrationY(blockLD_UY); blockLD_DY = blockLD_UY - 1; }
+                                    else if (blockLD_DY < 0) { blockLD_DY = Node.sMapClass.calibrationY(blockLD_DY); blockLD_UY = blockLD_DY + 1; }
+                                }
+
+                                if ((((UY > blockL_DY && UY < blockL_UY) || (DY > blockL_DY && DY < blockL_UY)) && (LX > blockL_LX && LX < blockL_RX) && Node.sMapClass.averageMapArr[blockL_X, blockL_Y] != 32) ||
+                                ((UY > blockLU_DY && UY < blockLU_UY) && (LX > blockL_LX && LX < blockL_RX) && Node.sMapClass.averageMapArr[blockL_X, blockLU_Y] != 32) ||
+                                ((DY > blockLD_DY && DY < blockLD_UY) && (LX > blockL_LX && LX < blockL_RX) && Node.sMapClass.averageMapArr[blockL_X, blockLD_Y] != 32)) return false;
                                 else return true;
                             }
                         case "R": {
-                                if ((((UY > blockR_DY && UY < blockR_UY) || (DY > blockR_DY && DY < blockR_UY)) && (RX > Map.calibrationX(blockR_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockR_LX)) < 1) && Map.MapArr[blockR_X, blockR_Y] != '!') ||
-                                ((UY > blockRU_DY && UY < blockRU_UY) && (RX > Map.calibrationX(blockRU_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockRU_LX)) < 1) && Map.MapArr[blockRU_X, blockRU_Y] != '!') ||
-                                ((DY > blockRD_DY && DY < blockRD_UY) && (RX > Map.calibrationX(blockRD_LX)) && (Mathf.Abs(RX - Map.calibrationX(blockRD_LX)) < 1) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
+                                //обработка координат игрока
+                                float RX = Node.sMapClass.calibrationX(Node.sPlayerClass.x + 0.25f + speed);
+                                float UY = Node.sPlayerClass.y/* + 0.25f*/;
+                                float DY = Node.sPlayerClass.y - 0.25f;
+
+                                //обработка координат блока
+                                int blockR_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x + 1 + 0.5f));
+                                int blockR_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y + 0.5f));
+
+                                float blockR_LX, blockR_RX, blockR_UY, blockR_DY, blockRU_UY, blockRU_DY, blockRD_UY, blockRD_DY;
+                                blockR_LX = Node.sMapClass.calibrationX(blockR_X - 0.5f);
+                                blockR_RX = blockR_LX + 1;
+                                blockR_UY = blockR_Y + 0.5f;
+                                blockR_DY = blockR_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockR_Y) >= 2) {
+                                    if (blockR_UY >= 128) { blockR_UY = Node.sMapClass.calibrationY(blockR_UY); blockR_DY = blockR_UY - 1; }
+                                    else if (blockR_DY < 0) { blockR_DY = Node.sMapClass.calibrationY(blockR_DY); blockR_UY = blockR_DY + 1; }
+                                }
+
+                                int blockRU_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y + 1 + 0.5f));
+                                blockRU_UY = blockRU_Y + 0.5f;
+                                blockRU_DY = blockRU_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockRU_Y) >= 2) {
+                                    if (blockRU_UY >= 128) { blockRU_UY = Node.sMapClass.calibrationY(blockRU_UY); blockRU_DY = blockRU_UY - 1; }
+                                    else if (blockRU_DY < 0) { blockRU_DY = Node.sMapClass.calibrationY(blockRU_DY); blockRU_UY = blockRU_DY + 1; }
+                                }
+
+                                int blockRD_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y - 1 + 0.5f));
+                                blockRD_UY = blockRD_Y + 0.5f;
+                                blockRD_DY = blockRD_Y - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.y - blockRD_Y) >= 2) {
+                                    if (blockRD_UY >= 128) { blockRD_UY = Node.sMapClass.calibrationY(blockRD_UY); blockRD_DY = blockRD_UY - 1; }
+                                    else if (blockRD_DY < 0) { blockRD_DY = Node.sMapClass.calibrationY(blockRD_DY); blockRD_UY = blockRD_DY + 1; }
+                                }
+
+                                if ((((UY > blockR_DY && UY < blockR_UY) || (DY > blockR_DY && DY < blockR_UY)) && (RX > blockR_LX && RX < blockR_RX) && Node.sMapClass.averageMapArr[blockR_X, blockR_Y] != 32) ||
+                                ((UY > blockRU_DY && UY < blockRU_UY) && (RX > blockR_LX && RX < blockR_RX) && Node.sMapClass.averageMapArr[blockR_X, blockRU_Y] != 32) ||
+                                ((DY > blockRD_DY && DY < blockRD_UY) && (RX > blockR_LX && RX < blockR_RX) && Node.sMapClass.averageMapArr[blockR_X, blockRD_Y] != 32)) return false;
                                 else return true;
                             }
                         case "U": {
-                                if ((((LX > blockU_LX && LX < blockU_RX) || (RX > blockU_LX && RX < blockU_RX)) && (UY > Map.calibrationY(blockU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockU_DY)) < 1) && Map.MapArr[blockU_X, blockU_Y] != '!') ||
-                                ((LX > blockLU_LX && LX < blockLU_RX) && (UY > Map.calibrationY(blockLU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockLU_DY)) < 1) && Map.MapArr[blockLU_X, blockLU_Y] != '!') ||
-                                ((RX > blockRU_LX && RX < blockRU_RX) && (UY > Map.calibrationY(blockRU_DY)) && (Mathf.Abs(UY - Map.calibrationX(blockRU_DY)) < 1) && Map.MapArr[blockRU_X, blockRU_Y] != '!')) return false;
+                                //обработка координат игрока
+                                float UY = Node.sMapClass.calibrationY(Node.sPlayerClass.y + 0.01f + speed);
+                                float LX = Node.sPlayerClass.x - 0.25f;
+                                float RX = Node.sPlayerClass.x + 0.25f;
+
+                                //обработка координат блока
+                                int blockU_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x + 0.5f));
+                                int blockU_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y + 1 + 0.5f));
+
+                                float blockU_LX, blockU_RX, blockU_UY, blockU_DY, blockLU_LX, blockLU_RX, blockRU_LX, blockRU_RX;
+                                blockU_DY = Node.sMapClass.calibrationY(blockU_Y - 0.5f);
+                                blockU_UY = blockU_DY + 1;
+                                blockU_RX = blockU_X + 0.5f;
+                                blockU_LX = blockU_X - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockU_X) >= 2) {
+                                    if (blockU_RX >= 128) { blockU_RX = Node.sMapClass.calibrationY(blockU_RX); blockU_LX = blockU_RX - 1; }
+                                    else if (blockU_LX < 0) { blockU_LX = Node.sMapClass.calibrationY(blockU_LX); blockU_RX = blockU_LX + 1; }
+                                }
+
+                                int blockLU_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x - 1 + 0.5f));
+                                blockLU_LX = blockLU_X - 0.5f;
+                                blockLU_RX = blockLU_X + 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockLU_X) >= 2) {
+                                    if (blockLU_RX >= 128) { blockLU_RX = Node.sMapClass.calibrationY(blockLU_RX); blockLU_LX = blockLU_RX - 1; }
+                                    else if (blockLU_LX < 0) { blockLU_LX = Node.sMapClass.calibrationY(blockLU_LX); blockLU_RX = blockLU_LX + 1; }
+                                }
+
+                                int blockRU_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x + 1 + 0.5f));
+                                blockRU_LX = blockRU_X - 0.5f;
+                                blockRU_RX = blockRU_X + 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockRU_X) >= 2) {
+                                    if (blockRU_RX >= 128) { blockRU_RX = Node.sMapClass.calibrationY(blockRU_RX); blockRU_LX = blockRU_RX - 1; }
+                                    else if (blockRU_LX < 0) { blockRU_LX = Node.sMapClass.calibrationY(blockRU_LX); blockRU_RX = blockRU_LX + 1; }
+                                }
+
+                                if ((((LX > blockU_LX && LX < blockU_RX) || (RX > blockU_LX && RX < blockU_RX)) && (UY > blockU_DY && UY < blockU_UY) && Node.sMapClass.averageMapArr[blockU_X, blockU_Y] != 32) ||
+                                ((LX > blockLU_LX && LX < blockLU_RX) && (UY > blockU_DY && UY < blockU_UY) && Node.sMapClass.averageMapArr[blockLU_X, blockU_Y] != 32) ||
+                                ((RX > blockRU_LX && RX < blockRU_RX) && (UY > blockU_DY && UY < blockU_UY) && Node.sMapClass.averageMapArr[blockRU_X, blockU_Y] != 32)) return false;
                                 else return true;
                             }
                         case "D": {
-                                if ((((LX > blockD_LX && LX < blockD_RX) || (RX > blockD_LX && RX < blockD_RX)) && (DY < blockD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockD_UY)) < 1) && Map.MapArr[blockD_X, blockD_Y] != '!') ||
-                                ((LX > blockLD_LX && LX < blockLD_RX) && (DY < blockLD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockLD_UY)) < 1) && Map.MapArr[blockLD_X, blockLD_Y] != '!') ||
-                                ((RX > blockRD_LX && RX < blockRD_RX) && (DY < blockRD_UY) && (Mathf.Abs(DY - Map.calibrationX(blockRD_UY)) < 1) && Map.MapArr[blockRD_X, blockRD_Y] != '!')) return false;
+                                //обработка координат игрока
+                                float DY = Node.sMapClass.calibrationY(Node.sPlayerClass.y - 0.25f - speed);
+                                float LX = Node.sPlayerClass.x - 0.25f;
+                                float RX = Node.sPlayerClass.x + 0.25f;
+
+                                //обработка координат блока
+                                int blockD_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x + 0.5f));
+                                int blockD_Y = Mathf.FloorToInt(Node.sMapClass.calibrationY(Node.sPlayerClass.y - 1 + 0.5f));
+
+                                float blockD_LX, blockD_RX, blockD_UY, blockD_DY, blockLD_LX, blockLD_RX, blockRD_LX, blockRD_RX;
+                                blockD_UY = Node.sMapClass.calibrationY(blockD_Y + 0.5f);
+                                blockD_DY = blockD_UY - 1;
+                                blockD_RX = blockD_X + 0.5f;
+                                blockD_LX = blockD_X - 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockD_X) >= 2) {
+                                    if (blockD_RX >= 128) { blockD_RX = Node.sMapClass.calibrationY(blockD_RX); blockD_LX = blockD_RX - 1; }
+                                    else if (blockD_LX < 0) { blockD_LX = Node.sMapClass.calibrationY(blockD_LX); blockD_RX = blockD_LX + 1; }
+                                }
+
+                                int blockLD_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x - 1 + 0.5f));
+                                blockLD_LX = blockLD_X - 0.5f;
+                                blockLD_RX = blockLD_X + 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockLD_X) >= 2) {
+                                    if (blockLD_RX >= 128) { blockLD_RX = Node.sMapClass.calibrationY(blockLD_RX); blockLD_LX = blockLD_RX - 1; }
+                                    else if (blockLD_LX < 0) { blockLD_LX = Node.sMapClass.calibrationY(blockLD_LX); blockLD_RX = blockLD_LX + 1; }
+                                }
+
+                                int blockRD_X = Mathf.FloorToInt(Node.sMapClass.calibrationX(Node.sPlayerClass.x + 1 + 0.5f));
+                                blockRD_LX = blockRD_X - 0.5f;
+                                blockRD_RX = blockRD_X + 0.5f;
+                                if (Mathf.Abs(Node.sPlayerClass.x - blockRD_X) >= 2) {
+                                    if (blockRD_RX >= 128) { blockRD_RX = Node.sMapClass.calibrationY(blockRD_RX); blockRD_LX = blockRD_RX - 1; }
+                                    else if (blockRD_LX < 0) { blockRD_LX = Node.sMapClass.calibrationY(blockRD_LX); blockRD_RX = blockRD_LX + 1; }
+                                }
+
+                                if ((((LX > blockD_LX && LX < blockD_RX) || (RX > blockD_LX && RX < blockD_RX)) && (DY > blockD_DY && DY < blockD_UY) && Node.sMapClass.averageMapArr[blockD_X, blockD_Y] != 32) ||
+                                ((LX > blockLD_LX && LX < blockLD_RX) && (DY > blockD_DY && DY < blockD_UY) && Node.sMapClass.averageMapArr[blockLD_X, blockD_Y] != 32) ||
+                                ((RX > blockRD_LX && RX < blockRD_RX) && (DY > blockD_DY && DY < blockD_UY) && Node.sMapClass.averageMapArr[blockRD_X, blockD_Y] != 32)) return false;
                                 else return true;
                             }
+                    }
+                    return true;
+                }
+            case "otherPlayer": {
+                    for(int i = -1; i <= 1; i++) {
+                        for(int j = -1; j <= 1; j++) {
+                            Debug.Log(Node.sServerControllerClass.playersInCells[(int)Node.sMapClass.calibrationX(Mathf.Floor(Node.sPlayerClass.x + 0.5f) + i), (int)Node.sMapClass.calibrationY(Mathf.FloorToInt(Node.sPlayerClass.y + 0.5f) - j)].Count);
+                        }
                     }
                     break;
                 }
         }
-        return false;
+        return true;
     }
 }

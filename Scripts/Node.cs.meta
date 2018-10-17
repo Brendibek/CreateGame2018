@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 880b6d8d19efb3240b5281b0aa505caf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mapGO: {fileID: 1282739811163890, guid: 949201494f8631b43bbcfcb1125d2e5a, type: 2}
+  - serverControllerGO: {fileID: 1402863207575018, guid: 2b6c7d8be47120c4db041234b8c1d41a,
+      type: 2}
+  - playerGO: {fileID: 1331771266303594, guid: a6ee0d01fe0c58246afba8b5a6670df1, type: 2}
+  - otherPlayersGO: {fileID: 1463891502477514, guid: 185a27687fca0fd48904268e93f43b74,
+      type: 2}
+  - texturesGO: {fileID: 1339668782515906, guid: b26aa92bffee5ca4697f393e1bdc7bf6,
+      type: 2}
+  - UIGO: {fileID: 1510798975239212, guid: d3c3002d46d2196429903e92d061abcc, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 public class Player : MonoBehaviour {
-    public static long playerId;
-    public static string playerName;
-    public static float x, y;
-    public static string position;
-    public static int blockId;
-    public static bool connect = false;
+    public long playerId;
+    public string playerName;
+    public float x, y;
+    public string position;
+    public int blockId;
+    public bool connect = false;
 }

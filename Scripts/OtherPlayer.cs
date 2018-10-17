@@ -1,14 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class OtherPlayer : MonoBehaviour {
     public int playerId;
-    public string playerName;
     public float x, y;
     public string position;
 
+    public GameObject playerNameGO;
+
     void FixedUpdate() {
         this.gameObject.transform.position = new Vector2(
-        x - Player.x > 32 ? x - Map.mapWidth : (x - Player.x < -32 ? x + Map.mapWidth : x),
-        y - Player.y > 32 ? y - Map.mapHeight : (y - Player.y < -32 ? y + Map.mapHeight : y));
+        x - Node.sPlayerClass.x > 32 ? x - Node.sMapClass.mapWidth : (x - Node.sPlayerClass.x < -32 ? x + Node.sMapClass.mapWidth : x),
+        y - Node.sPlayerClass.y > 32 ? y - Node.sMapClass.mapHeight : (y - Node.sPlayerClass.y < -32 ? y + Node.sMapClass.mapHeight : y));
+    }
+
+    public void setPlayerName(string playerName) {
+        this.transform.Find("OtherPlayerCanvas").Find("PlayerName").GetComponent<Text>().text = playerName;
     }
 }
