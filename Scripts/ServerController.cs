@@ -149,6 +149,10 @@ public class ServerController : MonoBehaviour {
                             Node.sMapClass.dataToObjectMapArr(objects);
                             break;
                         }
+                    case 100: {
+                            Debug.Log("Тук-тук");
+                            break;
+                        }
                 }
             }
             catch { }
