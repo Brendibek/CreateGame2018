@@ -37,9 +37,9 @@ public class Textures : MonoBehaviour {
 
     public void setTile(int x, int y, int lowerId, int averageId) {
         //lower
-        int xT = (int)Node.sMapClass.calibrationX(x);
+        int xT = (int)Node.sMapGO_sMapClass.calibrationX(x);
         xT -= Mathf.FloorToInt(xT / sprites[lowerId].countWidthSprite) * sprites[lowerId].countWidthSprite;
-        int yT = (int)Node.sMapClass.calibrationX(y);
+        int yT = (int)Node.sMapGO_sMapClass.calibrationX(y);
         yT -= Mathf.FloorToInt(yT / sprites[lowerId].countHeightSprite) * sprites[lowerId].countHeightSprite;
         yT = sprites[lowerId].countHeightSprite - 1 - yT;
         int textureId = xT + yT * sprites[lowerId].countWidthSprite;
@@ -47,8 +47,8 @@ public class Textures : MonoBehaviour {
         Tile texture = ScriptableObject.CreateInstance<Tile>();
         texture.sprite = sprites[lowerId].sprite[textureId];
 
-        Node.sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(x, y, 0), texture);
-        Node.sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(x, y, 1), null);
+        Node.sMapGO_sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(x, y, 0), texture);
+        Node.sMapGO_sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(x, y, 1), null);
         if (lowerId != 0) setMask(x, y, lowerId);
 
         //average
@@ -56,7 +56,7 @@ public class Textures : MonoBehaviour {
             bool LD = false, L = false, LU = false, U = false, RU = false, R = false, RD = false, D = false;
             for (int x2 = x - 1; x2 <= x + 1; x2++) {
                 for (int y2 = y - 1; y2 <= y + 1; y2++) {
-                    if (Node.sMapClass.averageMapArr[(int)Node.sMapClass.calibrationX(x2), (int)Node.sMapClass.calibrationY(y2)] == 33) {
+                    if (Node.sMapGO_sMapClass.averageMapArr[(int)Node.sMapGO_sMapClass.calibrationX(x2), (int)Node.sMapGO_sMapClass.calibrationY(y2)] == 33) {
                         if (x2 == x - 1 && y2 == y - 1) LD = true;
                         else if (x2 == x - 1 && y2 == y) L = true;
                         else if (x2 == x - 1 && y2 == y + 1) LU = true;
@@ -72,7 +72,7 @@ public class Textures : MonoBehaviour {
             if (idTeksture != -1) {
                 Tile b = ScriptableObject.CreateInstance<Tile>();
                 b.sprite = textureRock[idTeksture];
-                Node.sMapClass.averageRock.SetTile(new Vector3Int(x, y, 0), b);
+                Node.sMapGO_sMapClass.averageRock.SetTile(new Vector3Int(x, y, 0), b);
             }
         }
     }
@@ -80,11 +80,11 @@ public class Textures : MonoBehaviour {
     public void setMask(int x, int y, int lowerId) {
         for (int i = x - 1; i <= x + 1; i++) {
             for (int j = y - 1; j <= y + 1; j++) {
-                if ((i == x && j == y) || (Node.sMapClass.lowerMapArr[(int)Node.sMapClass.calibrationX(i), (int)Node.sMapClass.calibrationY(j)] == lowerId)) continue;
+                if ((i == x && j == y) || (Node.sMapGO_sMapClass.lowerMapArr[(int)Node.sMapGO_sMapClass.calibrationX(i), (int)Node.sMapGO_sMapClass.calibrationY(j)] == lowerId)) continue;
                 bool LD = false, L = false, LU = false, U = false, RU = false, R = false, RD = false, D = false;
                 for (int i2 = i - 1; i2 <= i + 1; i2++) {
                     for (int j2 = j - 1; j2 <= j + 1; j2++) {
-                        if (Node.sMapClass.getLowerTilemap(lowerId).GetTile(new Vector3Int(i2, j2, 0)) != null) {
+                        if (Node.sMapGO_sMapClass.getLowerTilemap(lowerId).GetTile(new Vector3Int(i2, j2, 0)) != null) {
                             if (i2 == i - 1 && j2 == j - 1) LD = true;
                             else if (i2 == i - 1 && j2 == j) L = true;
                             else if (i2 == i - 1 && j2 == j + 1) LU = true;
@@ -101,10 +101,10 @@ public class Textures : MonoBehaviour {
                 if (idMask != -1) {
                     Tile b = ScriptableObject.CreateInstance<Tile>();
                     b.sprite = getMask(lowerId, idMask);
-                    Node.sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(i, j, 1), b);
-                    Node.sMapClass.lowerMapMaskArr[(int)Node.sMapClass.calibrationX(i), (int)Node.sMapClass.calibrationY(j)] = true;
+                    Node.sMapGO_sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(i, j, 1), b);
+                    Node.sMapGO_sMapClass.lowerMapMaskArr[(int)Node.sMapGO_sMapClass.calibrationX(i), (int)Node.sMapGO_sMapClass.calibrationY(j)] = true;
                 }
-                else Node.sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(i, j, 1), null);
+                else Node.sMapGO_sMapClass.getLowerTilemap(lowerId).SetTile(new Vector3Int(i, j, 1), null);
             }
         }
     }

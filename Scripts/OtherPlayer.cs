@@ -10,8 +10,8 @@ public class OtherPlayer : MonoBehaviour {
 
     void FixedUpdate() {
         this.gameObject.transform.position = new Vector2(
-        x - Node.sPlayerClass.x > 32 ? x - Node.sMapClass.mapWidth : (x - Node.sPlayerClass.x < -32 ? x + Node.sMapClass.mapWidth : x),
-        y - Node.sPlayerClass.y > 32 ? y - Node.sMapClass.mapHeight : (y - Node.sPlayerClass.y < -32 ? y + Node.sMapClass.mapHeight : y));
+        x - Node.sPlayerGO_sPlayerClass.x > 32 ? x - Node.sMapGO_sMapClass.mapWidth : (x - Node.sPlayerGO_sPlayerClass.x < -32 ? x + Node.sMapGO_sMapClass.mapWidth : x),
+        y - Node.sPlayerGO_sPlayerClass.y > 32 ? y - Node.sMapGO_sMapClass.mapHeight : (y - Node.sPlayerGO_sPlayerClass.y < -32 ? y + Node.sMapGO_sMapClass.mapHeight : y));
     }
 
     public void setPlayerName(string playerName) {

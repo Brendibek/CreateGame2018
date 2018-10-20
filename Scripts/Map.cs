@@ -47,8 +47,8 @@ public class Map : MonoBehaviour {
 
     public void updateChunks(float playerX, float playerY, string side) {
         //отправка запроса карты
-        int tempBlockId = Node.sPlayerClass.blockId;
-        Node.sPlayerClass.blockId = getBlockId(playerX, playerY);
+        int tempBlockId = Node.sPlayerGO_sPlayerClass.blockId;
+        Node.sPlayerGO_sPlayerClass.blockId = getBlockId(playerX, playerY);
 
         JObject obj = new JObject();
         obj.Add(new JProperty("id", ServerController.Operation.updateChunks));
@@ -76,13 +76,13 @@ public class Map : MonoBehaviour {
 
     public void updateVisibleBlocks() {
         List<string> usedBlocks = new List<string>();
-        for (int blockX = Mathf.FloorToInt(Node.sPlayerClass.x) - 6; blockX <= Mathf.FloorToInt(Node.sPlayerClass.x) + 7; blockX++) {
-            for (int blockY = Mathf.FloorToInt(Node.sPlayerClass.y) - 4; blockY <= Mathf.FloorToInt(Node.sPlayerClass.y) + 5; blockY++) {
+        for (int blockX = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) - 6; blockX <= Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) + 7; blockX++) {
+            for (int blockY = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) - 4; blockY <= Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) + 5; blockY++) {
                 //Добавление не добавленых блоков
                 int lowerId = lowerMapArr[Mathf.FloorToInt(calibrationX(blockX)), Mathf.FloorToInt(calibrationY(blockY))];
                 int averageId = averageMapArr[Mathf.FloorToInt(calibrationX(blockX)), Mathf.FloorToInt(calibrationY(blockY))];
                 if (!listMapBlocks.Contains(blockX + "_" + blockY)) {
-                    Node.sTexturesClass.setTile(blockX, blockY, lowerId, averageId);
+                    Node.sTexturesGO_sTexturesClass.setTile(blockX, blockY, lowerId, averageId);
                     listMapBlocks.Add(blockX + "_" + blockY);
                 }
                 usedBlocks.Add(blockX + "_" + blockY);
@@ -93,7 +93,7 @@ public class Map : MonoBehaviour {
                     if (blockY < 5) newBlockY = blockY + mapHeight;
                     else if (blockY > 123) newBlockY = blockY - mapHeight;
                     if (!listMapBlocks.Contains(newBlockX + "_" + newBlockY)) {
-                        Node.sTexturesClass.setTile(newBlockX, newBlockY, lowerId, averageId);
+                        Node.sTexturesGO_sTexturesClass.setTile(newBlockX, newBlockY, lowerId, averageId);
                         listMapBlocks.Add(newBlockX + "_" + newBlockY);
                     }
                     usedBlocks.Add(newBlockX + "_" + newBlockY);
@@ -107,18 +107,18 @@ public class Map : MonoBehaviour {
             if (!usedBlocks.Contains(listMapBlocks[i])) {
                 int blockX = int.Parse(listMapBlocks[i].Split('_')[0]);
                 int blockY = int.Parse(listMapBlocks[i].Split('_')[1]);
-                Node.sTexturesClass.removeTile(water, blockX, blockY);
-                Node.sTexturesClass.removeTile(send, blockX, blockY);
-                Node.sTexturesClass.removeTile(dirt, blockX, blockY);
-                Node.sTexturesClass.removeTile(rock, blockX, blockY);
-                Node.sTexturesClass.removeTile(averageRock, blockX, blockY);
+                Node.sTexturesGO_sTexturesClass.removeTile(water, blockX, blockY);
+                Node.sTexturesGO_sTexturesClass.removeTile(send, blockX, blockY);
+                Node.sTexturesGO_sTexturesClass.removeTile(dirt, blockX, blockY);
+                Node.sTexturesGO_sTexturesClass.removeTile(rock, blockX, blockY);
+                Node.sTexturesGO_sTexturesClass.removeTile(averageRock, blockX, blockY);
                 removeBlocks.Add(listMapBlocks[i]);
             }
         }
         for(int i = 0; i < removeBlocks.Count; i++) listMapBlocks.Remove(removeBlocks[i]);
         //удаление не использованых  маск
-        for (int blockX = Mathf.FloorToInt(Node.sPlayerClass.x) - 8; blockX <= Mathf.FloorToInt(Node.sPlayerClass.x) + 9; blockX++) {
-            int blockYD = Mathf.FloorToInt(Node.sPlayerClass.y) - 6;
+        for (int blockX = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) - 8; blockX <= Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) + 9; blockX++) {
+            int blockYD = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) - 6;
             if (lowerMapMaskArr[(int)calibrationX(blockX), (int)calibrationY(blockYD)]) {
                 for (int i = 1; i <= 4; i++) getLowerTilemap(i).SetTile(new Vector3Int(blockX, blockYD, 1), null);
                 if (blockX < 9 || blockX > 119 || blockYD < 7 || blockYD > 121) {
@@ -131,7 +131,7 @@ public class Map : MonoBehaviour {
                 }
                 lowerMapMaskArr[(int)calibrationX(blockX), (int)calibrationY(blockYD)] = false;
             }
-            int blockYU = Mathf.FloorToInt(Node.sPlayerClass.y) + 7;
+            int blockYU = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) + 7;
             if (lowerMapMaskArr[(int)calibrationX(blockX), (int)calibrationY(blockYU)]) {
                 for (int i = 1; i <= 4; i++) getLowerTilemap(i).SetTile(new Vector3Int(blockX, blockYU, 1), null);
                 if (blockX < 9 || blockX > 119 || blockYU < 7 || blockYU > 121) {
@@ -145,8 +145,8 @@ public class Map : MonoBehaviour {
                 lowerMapMaskArr[(int)calibrationX(blockX), (int)calibrationY(blockYU)] = false;
             }
         }
-        for (int blockY = Mathf.FloorToInt(Node.sPlayerClass.y) - 5; blockY <= Mathf.FloorToInt(Node.sPlayerClass.y) + 6; blockY++) {
-            int blockXL = Mathf.FloorToInt(Node.sPlayerClass.x) - 8;
+        for (int blockY = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) - 5; blockY <= Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.y) + 6; blockY++) {
+            int blockXL = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) - 8;
             if (lowerMapMaskArr[(int)calibrationX(blockXL), (int)calibrationY(blockY)]) {
                 for (int i = 1; i <= 4; i++) getLowerTilemap(i).SetTile(new Vector3Int(blockXL, blockY, 1), null);
                 if (blockXL < 9 || blockXL > 119 || blockY < 7 || blockY > 121) {
@@ -159,7 +159,7 @@ public class Map : MonoBehaviour {
                 }
                 lowerMapMaskArr[(int)calibrationX(blockXL), (int)calibrationY(blockY)] = false;
             }
-            int blockXR = Mathf.FloorToInt(Node.sPlayerClass.x) + 9;
+            int blockXR = Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x) + 9;
             if (lowerMapMaskArr[(int)calibrationX(blockXR), (int)calibrationY(blockY)]) {
                 for (int i = 1; i <= 4; i++) getLowerTilemap(i).SetTile(new Vector3Int(blockXR, blockY, 1), null);
                 if (blockXR < 9 || blockXR > 119 || blockY < 7 || blockY > 121) {
@@ -275,10 +275,10 @@ public class Map : MonoBehaviour {
     }
 
     public Tilemap getLowerTilemap(int id) {
-        if (id == 1) return Node.sMapClass.water;
-        else if (id == 2) return Node.sMapClass.send;
-        else if (id == 3) return Node.sMapClass.dirt;
-        else if (id == 4) return Node.sMapClass.rock;
+        if (id == 1) return Node.sMapGO_sMapClass.water;
+        else if (id == 2) return Node.sMapGO_sMapClass.send;
+        else if (id == 3) return Node.sMapGO_sMapClass.dirt;
+        else if (id == 4) return Node.sMapGO_sMapClass.rock;
         else return null;
     }
 

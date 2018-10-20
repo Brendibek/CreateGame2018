@@ -16,12 +16,12 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     }
 
     public virtual void OnPointerDown(PointerEventData ped) {
-        Node.sMoveClass.joystick = true;
+        Node.sPlayerGO_sMoveClass.joystick = true;
         OnDrag(ped);
     }
 
     public virtual void OnPointerUp(PointerEventData ped) {
-        Node.sMoveClass.joystick = false;
+        Node.sPlayerGO_sMoveClass.joystick = false;
         inputVector = Vector2.zero;
         joystickImg.rectTransform.anchoredPosition = Vector2.zero;
     }
@@ -44,52 +44,52 @@ public class JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             angle = Mathf.Acos((inputVector.x * -1 + inputVector.y * 0) / (Mathf.Sqrt(inputVector.x * inputVector.x + inputVector.y * inputVector.y))) * Mathf.Rad2Deg + 180;
 
         if ((angle >= 337.5 && angle < 360) || (angle >= 0 && angle < 22.5)) {
-            Node.sMoveClass.left = false;
-            Node.sMoveClass.right = true;
-            Node.sMoveClass.up = false;
-            Node.sMoveClass.down = false;
+            Node.sPlayerGO_sMoveClass.left = false;
+            Node.sPlayerGO_sMoveClass.right = true;
+            Node.sPlayerGO_sMoveClass.up = false;
+            Node.sPlayerGO_sMoveClass.down = false;
         }
         else if (angle >= 22.5 && angle < 67.5) {
-            Node.sMoveClass.left = false;
-            Node.sMoveClass.right = true;
-            Node.sMoveClass.up = true;
-            Node.sMoveClass.down = false;
+            Node.sPlayerGO_sMoveClass.left = false;
+            Node.sPlayerGO_sMoveClass.right = true;
+            Node.sPlayerGO_sMoveClass.up = true;
+            Node.sPlayerGO_sMoveClass.down = false;
         }
         else if (angle >= 67.5 && angle < 112.5) {
-            Node.sMoveClass.left = false;
-            Node.sMoveClass.right = false;
-            Node.sMoveClass.up = true;
-            Node.sMoveClass.down = false;
+            Node.sPlayerGO_sMoveClass.left = false;
+            Node.sPlayerGO_sMoveClass.right = false;
+            Node.sPlayerGO_sMoveClass.up = true;
+            Node.sPlayerGO_sMoveClass.down = false;
         }
         else if (angle >= 112.5 && angle < 157.5) {
-            Node.sMoveClass.left = true;
-            Node.sMoveClass.right = false;
-            Node.sMoveClass.up = true;
-            Node.sMoveClass.down = false;
+            Node.sPlayerGO_sMoveClass.left = true;
+            Node.sPlayerGO_sMoveClass.right = false;
+            Node.sPlayerGO_sMoveClass.up = true;
+            Node.sPlayerGO_sMoveClass.down = false;
         }
         else if (angle >= 157.5 && angle < 202.5) {
-            Node.sMoveClass.left = true;
-            Node.sMoveClass.right = false;
-            Node.sMoveClass.up = false;
-            Node.sMoveClass.down = false;
+            Node.sPlayerGO_sMoveClass.left = true;
+            Node.sPlayerGO_sMoveClass.right = false;
+            Node.sPlayerGO_sMoveClass.up = false;
+            Node.sPlayerGO_sMoveClass.down = false;
         }
         else if (angle >= 202.5 && angle < 247.5) {
-            Node.sMoveClass.left = true;
-            Node.sMoveClass.right = false;
-            Node.sMoveClass.up = false;
-            Node.sMoveClass.down = true;
+            Node.sPlayerGO_sMoveClass.left = true;
+            Node.sPlayerGO_sMoveClass.right = false;
+            Node.sPlayerGO_sMoveClass.up = false;
+            Node.sPlayerGO_sMoveClass.down = true;
         }
         else if (angle >= 247.5 && angle< 292.5) {
-            Node.sMoveClass.left = false;
-            Node.sMoveClass.right = false;
-            Node.sMoveClass.up = false;
-            Node.sMoveClass.down = true;
+            Node.sPlayerGO_sMoveClass.left = false;
+            Node.sPlayerGO_sMoveClass.right = false;
+            Node.sPlayerGO_sMoveClass.up = false;
+            Node.sPlayerGO_sMoveClass.down = true;
         }
         else if (angle >= 292.5 && angle < 337.5) {
-            Node.sMoveClass.left = false;
-            Node.sMoveClass.right = true;
-            Node.sMoveClass.up = false;
-            Node.sMoveClass.down = true;
+            Node.sPlayerGO_sMoveClass.left = false;
+            Node.sPlayerGO_sMoveClass.right = true;
+            Node.sPlayerGO_sMoveClass.up = false;
+            Node.sPlayerGO_sMoveClass.down = true;
         }
     }
 }

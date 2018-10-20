@@ -3,56 +3,69 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour {
+    //Инструкция
+    //
+    //не объязательный параметр, может находится в любом другом классе
+    //public GameObject названиеОбъекта_GO;
+    //
+    //объязательный параметр, находится только в этом классе
+    //public static GameObject s_названиеОбъекта_GO;
+    //
+    //параметр доступа к компонентам класса, находится только в этом классе
+    //public static названиеКомпонента s_названиеОбъекта_GO_s_названиеКомпонента_Class;
+
 
     public GameObject mapGO;
     public static GameObject sMapGO;
-    public static Map sMapClass;
+    public static Map sMapGO_sMapClass;
 
     public GameObject serverControllerGO;
     public static GameObject sServerControllerGO;
-    public static ServerController sServerControllerClass;
+    public static ServerController sServerControllerGO_sServerControllerClass;
 
-    public GameObject playerGO;
+    public GameObject keyboardGO;
+    public static GameObject sKeyboardGO;
+    public static KeyboardListener sKeyboardGO_sKeyboardListenerClass;
+
     public static GameObject sPlayerGO;
-    public static Player sPlayerClass;
-    public static Move sMoveClass;
+    public static Player sPlayerGO_sPlayerClass;
+    public static Move sPlayerGO_sMoveClass;
 
     public GameObject otherPlayersGO;
     public static GameObject sOtherPlayersGO;
 
     public GameObject texturesGO;
     public static GameObject sTexturesGO;
-    public static Textures sTexturesClass;
+    public static Textures sTexturesGO_sTexturesClass;
 
     public GameObject UIGO;
     public static GameObject sUIGO;
-    public static Calendar sCalendarClass;
+    public static Calendar sUIGO_sCalendarClass;
 
     void Awake() {
         //добавление игровых объектов на сцену
         sMapGO = Instantiate(mapGO);
         sMapGO.name = "Map";
-        sMapClass = sMapGO.GetComponent<Map>();
+        sMapGO_sMapClass = sMapGO.GetComponent<Map>();
 
         sServerControllerGO = Instantiate(serverControllerGO);
         sServerControllerGO.name = "ServerController";
-        sServerControllerClass = sServerControllerGO.GetComponent<ServerController>();
+        sServerControllerGO_sServerControllerClass = sServerControllerGO.GetComponent<ServerController>();
 
-        sPlayerGO = Instantiate(playerGO);
-        sPlayerGO.name = "Player";
-        sPlayerClass = sPlayerGO.GetComponent<Player>();
-        sMoveClass = sPlayerGO.GetComponent<Move>();
+        sKeyboardGO = Instantiate(keyboardGO);
+        sKeyboardGO.name = "Keyboard";
+        sKeyboardGO_sKeyboardListenerClass = sKeyboardGO.GetComponent<KeyboardListener>();
 
         sOtherPlayersGO = Instantiate(otherPlayersGO);
         sOtherPlayersGO.name = "OtherPlayers";
 
         sTexturesGO = Instantiate(texturesGO);
         sTexturesGO.name = "Textures";
-        sTexturesClass = sTexturesGO.GetComponent<Textures>();
+        sTexturesGO_sTexturesClass = sTexturesGO.GetComponent<Textures>();
 
         sUIGO = Instantiate(UIGO);
         sUIGO.name = "UI";
 
-        sCalendarClass = sUIGO.transform.Find("WindowsCanvas").Find("Calendar").GetComponent<Calendar>();
+        sUIGO_sCalendarClass = sUIGO.transform.Find("WindowsCanvas").Find("Calendar").GetComponent<Calendar>();
     }
 }

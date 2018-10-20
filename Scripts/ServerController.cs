@@ -3,11 +3,13 @@ using UnityEngine;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using UnityEngine.UI;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 public class ServerController : MonoBehaviour {
+    public GameObject playerGO;
     public GameObject otherPlayerGO;
     
 
@@ -25,7 +27,7 @@ public class ServerController : MonoBehaviour {
 
     void Awake(){
         //инициализация масивов
-        playersInCells = new List<GameObject>[Node.sMapClass.mapWidth, Node.sMapClass.mapHeight];
+        playersInCells = new List<GameObject>[Node.sMapGO_sMapClass.mapWidth, Node.sMapGO_sMapClass.mapHeight];
 
         for (int i = 0; i < playersInCells.GetLength(0); i++)
             for (int j = 0; j < playersInCells.GetLength(1); j++)
@@ -36,7 +38,9 @@ public class ServerController : MonoBehaviour {
             client = new TcpClient("109.234.38.91", 4000);
             serverIsConnected = true;
         }
-        catch { Debug.LogError("Попытка подключиться к серверу не удалась."); }
+        catch {
+            GameObject.Find("LoadCamera").transform.Find("Canvas").Find("Text").GetComponent<Text>().text = "Попытка подключиться к серверу не удалась.";
+        }
     }
 
     void Start () {
@@ -61,18 +65,24 @@ public class ServerController : MonoBehaviour {
 
     void FixedUpdate() {
         if (serverMessage.Length != 0) {
-            Debug.Log(serverMessage);
             try {
                 JObject objFromServer = JObject.Parse(serverMessage);
                 int messageId = (int)objFromServer.GetValue("id");
                 switch (messageId) {
                     case 0: {
-                            Node.sPlayerClass.playerId = (long)objFromServer.GetValue("playerId");
-                            Node.sPlayerClass.playerName = objFromServer.GetValue("name").ToString();
-                            Node.sPlayerClass.x = (float)objFromServer.GetValue("x");
-                            Node.sPlayerClass.y = (float)objFromServer.GetValue("y");
-                            Node.sPlayerClass.position = objFromServer.GetValue("position").ToString();
-                            Node.sPlayerClass.connect = true;
+                            GameObject.Find("LoadCamera").SetActive(false);
+                            //Node
+                            Node.sPlayerGO = Instantiate(playerGO);
+                            Node.sPlayerGO.name = "Player";
+                            Node.sPlayerGO_sPlayerClass = Node.sPlayerGO.GetComponent<Player>();
+                            Node.sPlayerGO_sMoveClass = Node.sPlayerGO.GetComponent<Move>();
+
+                            Node.sPlayerGO_sPlayerClass.playerId = (long)objFromServer.GetValue("playerId");
+                            Node.sPlayerGO_sPlayerClass.playerName = objFromServer.GetValue("name").ToString();
+                            Node.sPlayerGO_sPlayerClass.x = (float)objFromServer.GetValue("x");
+                            Node.sPlayerGO_sPlayerClass.y = (float)objFromServer.GetValue("y");
+                            Node.sPlayerGO_sPlayerClass.position = objFromServer.GetValue("position").ToString();
+                            Node.sPlayerGO_sPlayerClass.connect = true;
                             break;
                         }
                     case 1: {
@@ -96,13 +106,13 @@ public class ServerController : MonoBehaviour {
                             if (isNew) {
                                 optionsOtherPlayer.playerId = playerId;
                                 optionsOtherPlayer.setPlayerName(objFromServer.GetValue("name").ToString());
-                                playersInCells[Mathf.FloorToInt(Node.sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
+                                playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
                             }
                             else {
                                 if (Mathf.FloorToInt(tempOtherPlayerX + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.x + 0.5f)
                                     || Mathf.FloorToInt(tempOtherPlayerY + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.y + 0.5f)) {
-                                    playersInCells[Mathf.FloorToInt(Node.sMapClass.calibrationX(tempOtherPlayerX + 0.5f)), Mathf.FloorToInt(Node.sMapClass.calibrationY(tempOtherPlayerY + 0.5f))].Remove(otherPlayers[playerId]);
-                                    playersInCells[Mathf.FloorToInt(Node.sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
+                                    playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(tempOtherPlayerX + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(tempOtherPlayerY + 0.5f))].Remove(otherPlayers[playerId]);
+                                    playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
                                 }
                             }
                             break;
@@ -116,11 +126,11 @@ public class ServerController : MonoBehaviour {
                             JArray blocks = (JArray)objFromServer.GetValue("blocks");
                             switch ((string)objFromServer.GetValue("type")) {
                                 case "lower": {
-                                        Node.sMapClass.dataToLowerMapArr(blocks);
+                                        Node.sMapGO_sMapClass.dataToLowerMapArr(blocks);
                                         break;
                                     }
                                 case "average": {
-                                        Node.sMapClass.dataToAverageMapArr(blocks);
+                                        Node.sMapGO_sMapClass.dataToAverageMapArr(blocks);
                                         break;
                                     }
                             }
@@ -133,20 +143,21 @@ public class ServerController : MonoBehaviour {
                     case 5: {
                             //я message
                             //мне message playerId
+                            Debug.Log((string)objFromServer.GetValue("message"));
                             break;
                         }
                     case 6: {
-                            Node.sCalendarClass.period = 60000 / (long)objFromServer.GetValue("period");
-                            Node.sCalendarClass.year = (int)objFromServer.GetValue("year");
-                            Node.sCalendarClass.month = (int)objFromServer.GetValue("month");
-                            Node.sCalendarClass.day = (int)objFromServer.GetValue("day");
-                            Node.sCalendarClass.hour = (int)objFromServer.GetValue("hour");
-                            Node.sCalendarClass.minute = (int)objFromServer.GetValue("minute");
+                            Node.sUIGO_sCalendarClass.period = 60000 / (long)objFromServer.GetValue("period");
+                            Node.sUIGO_sCalendarClass.year = (int)objFromServer.GetValue("year");
+                            Node.sUIGO_sCalendarClass.month = (int)objFromServer.GetValue("month");
+                            Node.sUIGO_sCalendarClass.day = (int)objFromServer.GetValue("day");
+                            Node.sUIGO_sCalendarClass.hour = (int)objFromServer.GetValue("hour");
+                            Node.sUIGO_sCalendarClass.minute = (int)objFromServer.GetValue("minute");
                             break;
                         }
                     case 7: {
                             JArray objects = (JArray)objFromServer.GetValue("objects");
-                            Node.sMapClass.dataToObjectMapArr(objects);
+                            Node.sMapGO_sMapClass.dataToObjectMapArr(objects);
                             break;
                         }
                 }

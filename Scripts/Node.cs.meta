@@ -5,9 +5,10 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - mapGO: {fileID: 1282739811163890, guid: 949201494f8631b43bbcfcb1125d2e5a, type: 2}
+  - keyboardGO: {fileID: 1885094488166686, guid: 7005e56928aeb1f42bf4ca2d34f68b94,
+      type: 2}
   - serverControllerGO: {fileID: 1402863207575018, guid: 2b6c7d8be47120c4db041234b8c1d41a,
       type: 2}
-  - playerGO: {fileID: 1331771266303594, guid: a6ee0d01fe0c58246afba8b5a6670df1, type: 2}
   - otherPlayersGO: {fileID: 1463891502477514, guid: 185a27687fca0fd48904268e93f43b74,
       type: 2}
   - texturesGO: {fileID: 1339668782515906, guid: b26aa92bffee5ca4697f393e1bdc7bf6,
