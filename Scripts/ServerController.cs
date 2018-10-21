@@ -141,18 +141,19 @@ public class ServerController : MonoBehaviour {
                             break;
                         }
                     case 5: {
-                            //я message
-                            //мне message playerId
-                            Debug.Log((string)objFromServer.GetValue("message"));
+                            string message = objFromServer.GetValue("message").ToString();
+                            int playerId = (int)objFromServer.GetValue("playerId");
+                            OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
+                            StartCoroutine(optionsOtherPlayer.setLocalMessage(message));
                             break;
                         }
                     case 6: {
-                            Node.sUIGO_sCalendarClass.period = 60000 / (long)objFromServer.GetValue("period");
-                            Node.sUIGO_sCalendarClass.year = (int)objFromServer.GetValue("year");
-                            Node.sUIGO_sCalendarClass.month = (int)objFromServer.GetValue("month");
-                            Node.sUIGO_sCalendarClass.day = (int)objFromServer.GetValue("day");
-                            Node.sUIGO_sCalendarClass.hour = (int)objFromServer.GetValue("hour");
-                            Node.sUIGO_sCalendarClass.minute = (int)objFromServer.GetValue("minute");
+                            Node.sCalendarGO_sCalendarClass.period = 60000 / (long)objFromServer.GetValue("period");
+                            Node.sCalendarGO_sCalendarClass.year = (int)objFromServer.GetValue("year");
+                            Node.sCalendarGO_sCalendarClass.month = (int)objFromServer.GetValue("month");
+                            Node.sCalendarGO_sCalendarClass.day = (int)objFromServer.GetValue("day");
+                            Node.sCalendarGO_sCalendarClass.hour = (int)objFromServer.GetValue("hour");
+                            Node.sCalendarGO_sCalendarClass.minute = (int)objFromServer.GetValue("minute");
                             break;
                         }
                     case 7: {

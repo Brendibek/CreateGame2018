@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class OtherPlayer : MonoBehaviour {
     public int playerId;
@@ -16,5 +17,12 @@ public class OtherPlayer : MonoBehaviour {
 
     public void setPlayerName(string playerName) {
         this.transform.Find("OtherPlayerCanvas").Find("PlayerName").GetComponent<Text>().text = playerName;
+    }
+
+    public IEnumerator setLocalMessage(string message) {
+        this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").gameObject.SetActive(true);
+        this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").Find("Text").GetComponent<Text>().text = message;
+        yield return new WaitForSeconds(3f);
+        if(this.gameObject != null) this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").gameObject.SetActive(false);
     }
 }

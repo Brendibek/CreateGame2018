@@ -27,13 +27,6 @@ public class Move : MonoBehaviour {
                 Node.sPlayerGO_sPlayerClass.x = this.gameObject.transform.position.x;
                 Node.sPlayerGO_sPlayerClass.y = this.gameObject.transform.position.y;
 
-                if (Input.GetKey(KeyCode.T)) {
-                    JObject obj = new JObject();
-                    obj.Add(new JProperty("id", ServerController.Operation.chat));
-                    obj.Add(new JProperty("message", "Сообщение"));
-                    ServerController.send(obj);
-                }
-
                 if (left && up) {
                     if (collision("L", dspeed, "mapBlock")) Node.sPlayerGO_sPlayerClass.x -= dspeed;
                     else Node.sPlayerGO_sPlayerClass.x -= (Node.sPlayerGO_sPlayerClass.x - 0.75f) - Mathf.FloorToInt(Node.sPlayerGO_sPlayerClass.x);

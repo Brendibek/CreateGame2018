@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Node : MonoBehaviour {
     //Инструкция
@@ -38,9 +39,13 @@ public class Node : MonoBehaviour {
     public static GameObject sTexturesGO;
     public static Textures sTexturesGO_sTexturesClass;
 
+    //UI
     public GameObject UIGO;
     public static GameObject sUIGO;
-    public static Calendar sUIGO_sCalendarClass;
+    public static GameObject sCalendarGO;
+    public static Calendar sCalendarGO_sCalendarClass;
+
+    public static GameObject sLocalChatInputFieldGO;
 
     void Awake() {
         //добавление игровых объектов на сцену
@@ -66,6 +71,10 @@ public class Node : MonoBehaviour {
         sUIGO = Instantiate(UIGO);
         sUIGO.name = "UI";
 
-        sUIGO_sCalendarClass = sUIGO.transform.Find("WindowsCanvas").Find("Calendar").GetComponent<Calendar>();
+        sCalendarGO = sUIGO.transform.Find("WindowsCanvas").Find("Calendar").gameObject;
+        sCalendarGO_sCalendarClass = sCalendarGO.GetComponent<Calendar>();
+
+        sLocalChatInputFieldGO = sUIGO.transform.Find("WindowsCanvas").Find("LocalChatInputField").gameObject;
+        
     }
 }
