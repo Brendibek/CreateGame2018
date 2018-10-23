@@ -19,7 +19,7 @@ public class KeyboardListener : MonoBehaviour {
                 if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) Node.sPlayerGO_sMoveClass.down = true;
             }
 
-            if (Input.GetKey(KeyCode.T) && focus) {
+            if (Input.GetKey(KeyCode.T) && focus && !localChat) {
                 focus = false;
                 localChat = true;
                 Node.sLocalChatInputFieldGO.SetActive(true);
@@ -35,7 +35,6 @@ public class KeyboardListener : MonoBehaviour {
             if (Input.GetKey(KeyCode.Return)) {
                 focus = true;
                 if (localChat) {
-                    localChat = false;
                     string message = Node.sLocalChatInputFieldGO.GetComponent<InputField>().text;
                     Node.sLocalChatInputFieldGO.GetComponent<InputField>().text = "";
                     Node.sLocalChatInputFieldGO.SetActive(false);
@@ -44,6 +43,7 @@ public class KeyboardListener : MonoBehaviour {
                         obj.Add(new JProperty("id", ServerController.Operation.chat));
                         obj.Add(new JProperty("message", message));
                         ServerController.send(obj);
+                        StartCoroutine(Node.sPlayerGO_sPlayerClass.setLocalMessage(message));
                     }
                 }
             }

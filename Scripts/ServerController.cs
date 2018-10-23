@@ -74,7 +74,7 @@ public class ServerController : MonoBehaviour {
                             //Node
                             Node.sPlayerGO = Instantiate(playerGO);
                             Node.sPlayerGO.name = "Player";
-                            Node.sPlayerGO_sPlayerClass = Node.sPlayerGO.GetComponent<Player>();
+                            Node.sPlayerGO_sPlayerClass = Node.sPlayerGO.GetComponent<MyPlayer>();
                             Node.sPlayerGO_sMoveClass = Node.sPlayerGO.GetComponent<Move>();
 
                             Node.sPlayerGO_sPlayerClass.playerId = (long)objFromServer.GetValue("playerId");

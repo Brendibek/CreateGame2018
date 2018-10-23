@@ -23,6 +23,6 @@ public class OtherPlayer : MonoBehaviour {
         this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").gameObject.SetActive(true);
         this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").Find("Text").GetComponent<Text>().text = message;
         yield return new WaitForSeconds(3f);
-        if(this.gameObject != null) this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").gameObject.SetActive(false);
+        this.transform.Find("OtherPlayerCanvas").Find("LocalMessage").gameObject.SetActive(false);
     }
 }

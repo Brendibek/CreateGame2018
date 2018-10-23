@@ -29,7 +29,7 @@ public class Node : MonoBehaviour {
     public static KeyboardListener sKeyboardGO_sKeyboardListenerClass;
 
     public static GameObject sPlayerGO;
-    public static Player sPlayerGO_sPlayerClass;
+    public static MyPlayer sPlayerGO_sPlayerClass;
     public static Move sPlayerGO_sMoveClass;
 
     public GameObject otherPlayersGO;
