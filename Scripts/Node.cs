@@ -20,6 +20,9 @@ public class Node : MonoBehaviour {
     public static GameObject sMapGO;
     public static Map sMapGO_sMapClass;
 
+    public static GameObject sLoadCameraGO;
+    public static Text sLoadCameraGO_TextGO;
+
     public GameObject serverControllerGO;
     public static GameObject sServerControllerGO;
     public static ServerController sServerControllerGO_sServerControllerClass;
@@ -52,6 +55,9 @@ public class Node : MonoBehaviour {
         sMapGO = Instantiate(mapGO);
         sMapGO.name = "Map";
         sMapGO_sMapClass = sMapGO.GetComponent<Map>();
+
+        sLoadCameraGO = GameObject.Find("LoadCamera");
+        sLoadCameraGO_TextGO = sLoadCameraGO.transform.Find("Canvas").Find("Text").GetComponent<Text>();
 
         sServerControllerGO = Instantiate(serverControllerGO);
         sServerControllerGO.name = "ServerController";

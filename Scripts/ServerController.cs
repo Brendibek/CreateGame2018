@@ -39,7 +39,7 @@ public class ServerController : MonoBehaviour {
             serverIsConnected = true;
         }
         catch {
-            GameObject.Find("LoadCamera").transform.Find("Canvas").Find("Text").GetComponent<Text>().text = "Попытка подключиться к серверу не удалась.";
+            Node.sLoadCameraGO_TextGO.text = "Попытка подключиться к серверу не удалась.";
         }
     }
 
@@ -55,7 +55,7 @@ public class ServerController : MonoBehaviour {
             JObject obj = new JObject();
             obj.Add(new JProperty("id", Operation.auth));
             obj.Add(new JProperty("name", "player" + Random.Range(0, 100)));
-            send(obj);
+            sendMessage(obj);
         }
 	}
 
@@ -70,7 +70,7 @@ public class ServerController : MonoBehaviour {
                 int messageId = (int)objFromServer.GetValue("id");
                 switch (messageId) {
                     case 0: {
-                            GameObject.Find("LoadCamera").SetActive(false);
+                            Node.sLoadCameraGO.SetActive(false);
                             //Node
                             Node.sPlayerGO = Instantiate(playerGO);
                             Node.sPlayerGO.name = "Player";
@@ -168,9 +168,15 @@ public class ServerController : MonoBehaviour {
         }
     }
 
-    public static void send(JObject obj) {
-        string message = obj.ToString(Formatting.None);
-        writer.WriteLine(message);
+    public static void sendMessage(JObject obj) {
+        try {
+            string message = obj.ToString(Formatting.None);
+            writer.WriteLine(message);
+        } catch {
+            Node.sLoadCameraGO.SetActive(true);
+            Node.sLoadCameraGO_TextGO.text = "Связь с сервером потеряна.";
+            //TODO функция переподключения
+        }
     }
 
     void deletePlayer(int playerId) { 
@@ -188,20 +194,12 @@ public class ServerController : MonoBehaviour {
             writer.Close();
         }
         Application.Quit();
-        //disconnect();
     }
-
-    private void disconnect() {
-        JObject obj = new JObject(); obj.Add(new JProperty("id", Operation.disconnect)); send(obj);
-        stream.Close ();
-		client.Close ();
-	}
 
     public enum Operation {
         auth = 0,
         sendMyXY = 1,
         updateChunks = 3,
-        disconnect = 4,
         chat = 5,  
     }
 }

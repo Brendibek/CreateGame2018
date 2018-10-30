@@ -28,6 +28,7 @@ public class KeyboardListener : MonoBehaviour {
 
             if (Input.GetKey(KeyCode.Escape)) {
                 focus = true;
+                localChat = false;
                 Node.sLocalChatInputFieldGO.SetActive(false);
             }
 
@@ -42,7 +43,7 @@ public class KeyboardListener : MonoBehaviour {
                         JObject obj = new JObject();
                         obj.Add(new JProperty("id", ServerController.Operation.chat));
                         obj.Add(new JProperty("message", message));
-                        ServerController.send(obj);
+                        ServerController.sendMessage(obj);
                         StartCoroutine(Node.sPlayerGO_sPlayerClass.setLocalMessage(message));
                     }
                 }

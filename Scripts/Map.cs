@@ -18,6 +18,8 @@ public class Map : MonoBehaviour {
     public char[,] topMapArr;
     public bool[,] lowerMapMaskArr;
 
+    public MapObject[,] mapObjectMapArr;
+
     public Tilemap water, send, dirt, rock;
     public Tilemap averageRock;
 
@@ -30,6 +32,8 @@ public class Map : MonoBehaviour {
 
         topMapArr = new char[mapWidth, mapHeight];
         lowerMapMaskArr = new bool[mapWidth, mapHeight];
+
+        mapObjectMapArr = new MapObject[mapWidth, mapHeight];
 
         //добавление игровых объектов на сцену start
         this.water = GameObject.Find("Water").GetComponent<Tilemap>();
@@ -71,7 +75,7 @@ public class Map : MonoBehaviour {
                     break;
                 }
         }
-        ServerController.send(obj);
+        ServerController.sendMessage(obj);
     }
 
     public void updateVisibleBlocks() {
@@ -218,7 +222,6 @@ public class Map : MonoBehaviour {
                 }
             }
         }
-        //updateVisibleBlocks();
     }
 
     //установка текстуры на средний слой
@@ -245,13 +248,13 @@ public class Map : MonoBehaviour {
             int blockId = (int)obj.GetValue("blockId");
             JArray blockData = (JArray)obj.GetValue("blockObjects");
             for(int i = 0; i < blockData.Count; i++) {
-                Debug.Log(blockData.ToString(Formatting.None));
-                Debug.Log(blockData.Count);
                 JObject obj2 = (JObject)blockData[i];
-                Debug.Log(obj2.GetValue("x"));
+                MapObject mapObject = new MapObject();
                 int x = (int)obj2.GetValue("x");
                 int y = (int)obj2.GetValue("y");
-                switch ((string)obj2.GetValue("type")) {
+                mapObject.type = (string)obj2.GetValue("type");
+                mapObjectMapArr[x, y] = mapObject;
+                switch (mapObject.type) {
                     case "bush": {
                             Objects.setObject(x, y, 0);
                             break;
@@ -261,7 +264,6 @@ public class Map : MonoBehaviour {
                             break;
                         }
                 }
-                
             }
         }
     }
@@ -302,5 +304,9 @@ public class Map : MonoBehaviour {
         else if (i == 1 && j == 0) return "R";
         else if (i == 1 && j == 1) return "RU";
         return null;
+    }
+
+    public struct MapObject {
+        public string type;
     }
 }
