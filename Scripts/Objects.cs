@@ -11,7 +11,14 @@ public class Objects : MonoBehaviour {
         }
     }
 
-    public static void setObject(int x, int y, int id) {
-        Instantiate(objectsList[id], new Vector2(x, y), Quaternion.identity);
+    public static void setObject(int x, int y, string type) {
+        GameObject tempObj = Instantiate(objectsList[getObjectId(type)], new Vector2(x, y), Quaternion.identity);
+        tempObj.GetComponent<ObjectListener>().type = type;
+    }
+
+    private static int getObjectId(string type)
+    {
+        if (type == "bush") return 0;
+        else return 1;
     }
 }

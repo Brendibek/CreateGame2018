@@ -256,11 +256,11 @@ public class Map : MonoBehaviour {
                 mapObjectMapArr[x, y] = mapObject;
                 switch (mapObject.type) {
                     case "bush": {
-                            Objects.setObject(x, y, 0);
+                            Objects.setObject(x, y, "bush");
                             break;
                         }
                     case "stick": {
-                            Objects.setObject(x, y, 1);
+                            Objects.setObject(x, y, "stick");
                             break;
                         }
                 }

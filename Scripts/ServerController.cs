@@ -73,6 +73,7 @@ public class ServerController : MonoBehaviour {
                             Node.sLoadCameraGO.SetActive(false);
                             //Node
                             Node.sPlayerGO = Instantiate(playerGO);
+                            Node.sPlayerGO.transform.parent = Node.sGO.transform;
                             Node.sPlayerGO.name = "Player";
                             Node.sPlayerGO_sPlayerClass = Node.sPlayerGO.GetComponent<MyPlayer>();
                             Node.sPlayerGO_sMoveClass = Node.sPlayerGO.GetComponent<Move>();
@@ -173,6 +174,7 @@ public class ServerController : MonoBehaviour {
             string message = obj.ToString(Formatting.None);
             writer.WriteLine(message);
         } catch {
+            Debug.Log("+");
             Node.sLoadCameraGO.SetActive(true);
             Node.sLoadCameraGO_TextGO.text = "Связь с сервером потеряна.";
             //TODO функция переподключения
