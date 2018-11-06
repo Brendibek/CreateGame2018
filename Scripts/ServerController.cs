@@ -63,7 +63,7 @@ public class ServerController : MonoBehaviour {
         while (true) if (serverMessage.Length == 0) serverMessage = reader.ReadLine();
     }
 
-    void FixedUpdate() {
+    void Update() {
         if (serverMessage.Length != 0) {
             try {
                 JObject objFromServer = JObject.Parse(serverMessage);
@@ -98,22 +98,23 @@ public class ServerController : MonoBehaviour {
                             }
 
                             OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
-                            float tempOtherPlayerX = optionsOtherPlayer.x, tempOtherPlayerY = optionsOtherPlayer.y;
-                            optionsOtherPlayer.x = (float)objFromServer.GetValue("x");
-                            optionsOtherPlayer.y = (float)objFromServer.GetValue("y");
+                            float tempOtherPlayerX = optionsOtherPlayer.newX, tempOtherPlayerY = optionsOtherPlayer.newY;
+                            optionsOtherPlayer.newX = (float)objFromServer.GetValue("x");
+                            optionsOtherPlayer.newY = (float)objFromServer.GetValue("y");
                             optionsOtherPlayer.position = objFromServer.GetValue("position").ToString();
 
                             //0.5 из-за того что даются координаты центра объекта
                             if (isNew) {
                                 optionsOtherPlayer.playerId = playerId;
                                 optionsOtherPlayer.setPlayerName(objFromServer.GetValue("name").ToString());
-                                playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
+                                optionsOtherPlayer.setXY();
+                                playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.newX + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.newY + 0.5f))].Add(otherPlayers[playerId]);
                             }
                             else {
-                                if (Mathf.FloorToInt(tempOtherPlayerX + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.x + 0.5f)
-                                    || Mathf.FloorToInt(tempOtherPlayerY + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.y + 0.5f)) {
+                                if (Mathf.FloorToInt(tempOtherPlayerX + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.newX + 0.5f)
+                                    || Mathf.FloorToInt(tempOtherPlayerY + 0.5f) != Mathf.FloorToInt(optionsOtherPlayer.newY + 0.5f)) {
                                     playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(tempOtherPlayerX + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(tempOtherPlayerY + 0.5f))].Remove(otherPlayers[playerId]);
-                                    playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.x + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.y + 0.5f))].Add(otherPlayers[playerId]);
+                                    playersInCells[Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationX(optionsOtherPlayer.newX + 0.5f)), Mathf.FloorToInt(Node.sMapGO_sMapClass.calibrationY(optionsOtherPlayer.newY + 0.5f))].Add(otherPlayers[playerId]);
                                 }
                             }
                             break;
@@ -174,9 +175,9 @@ public class ServerController : MonoBehaviour {
             string message = obj.ToString(Formatting.None);
             writer.WriteLine(message);
         } catch {
-            Debug.Log("+");
             Node.sLoadCameraGO.SetActive(true);
             Node.sLoadCameraGO_TextGO.text = "Связь с сервером потеряна.";
+            Destroy(Node.sGO);
             //TODO функция переподключения
         }
     }
@@ -184,7 +185,7 @@ public class ServerController : MonoBehaviour {
     void deletePlayer(int playerId) { 
         if (otherPlayers.ContainsKey(playerId)) {
             OtherPlayer optionsOtherPlayer = otherPlayers[playerId].GetComponent<OtherPlayer>();
-            playersInCells[Mathf.FloorToInt(optionsOtherPlayer.x), Mathf.FloorToInt(optionsOtherPlayer.y)].Remove(otherPlayers[playerId]);
+            playersInCells[Mathf.FloorToInt(optionsOtherPlayer.newX), Mathf.FloorToInt(optionsOtherPlayer.newY)].Remove(otherPlayers[playerId]);
             Destroy(otherPlayers[playerId]);
             otherPlayers.Remove(playerId);
         }

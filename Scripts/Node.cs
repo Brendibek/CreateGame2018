@@ -72,7 +72,6 @@ public class Node : MonoBehaviour {
         sObjctsGO.transform.parent = sGO.transform;
         sObjctsGO.name = "Objects";
 
-
         sServerControllerGO = Instantiate(serverControllerGO);
         sServerControllerGO.transform.parent = sGO.transform;
         sServerControllerGO.name = "ServerController";

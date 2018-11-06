@@ -4,15 +4,24 @@ using System.Collections;
 
 public class OtherPlayer : MonoBehaviour {
     public int playerId;
-    public float x, y;
+    public float newX, newY;
+    private float oldX, oldY;
     public string position;
 
     public GameObject playerNameGO;
 
     void FixedUpdate() {
-        this.gameObject.transform.position = new Vector2(
-        x - Node.sPlayerGO_sPlayerClass.x > 32 ? x - Node.sMapGO_sMapClass.mapWidth : (x - Node.sPlayerGO_sPlayerClass.x < -32 ? x + Node.sMapGO_sMapClass.mapWidth : x),
-        y - Node.sPlayerGO_sPlayerClass.y > 32 ? y - Node.sMapGO_sMapClass.mapHeight : (y - Node.sPlayerGO_sPlayerClass.y < -32 ? y + Node.sMapGO_sMapClass.mapHeight : y));
+        float speed = Mathf.Sqrt(Mathf.Pow(this.gameObject.transform.position.x - newX, 2) + Mathf.Pow(this.gameObject.transform.position.y - newY, 2));
+        float calibX = newX - Node.sPlayerGO_sPlayerClass.x > 32 ? newX - Node.sMapGO_sMapClass.mapWidth : (newX - Node.sPlayerGO_sPlayerClass.x < -32 ? newX + Node.sMapGO_sMapClass.mapWidth : newX);
+        float calibY = newY - Node.sPlayerGO_sPlayerClass.y > 32 ? newY - Node.sMapGO_sMapClass.mapHeight : (newY - Node.sPlayerGO_sPlayerClass.y < -32 ? newY + Node.sMapGO_sMapClass.mapHeight : newY);
+        //this.gameObject.transform.position = new Vector2(newX, newY);
+        this.gameObject.transform.position = Vector2.MoveTowards(this.gameObject.transform.position, new Vector2(calibX, calibY), speed / 20);
+        oldX = newX;
+        oldY = newY;
+    }
+
+    public void setXY() {
+        this.gameObject.transform.position = new Vector2(newX, newY);
     }
 
     public void setPlayerName(string playerName) {
