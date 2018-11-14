@@ -43,7 +43,7 @@ public class KeyboardListener : MonoBehaviour {
                         JObject obj = new JObject();
                         obj.Add(new JProperty("id", ServerController.Operation.chat));
                         obj.Add(new JProperty("message", message));
-                        ServerController.sendMessage(obj);
+                        Node.sServerControllerGO_sServerControllerClass.sendMessage(obj);
                         StartCoroutine(Node.sPlayerGO_sPlayerClass.setLocalMessage(message));
                     }
                 }

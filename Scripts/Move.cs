@@ -96,7 +96,7 @@ public class Move : MonoBehaviour {
                     obj.Add(new JProperty("x", Node.sPlayerGO_sPlayerClass.x));
                     obj.Add(new JProperty("y", Node.sPlayerGO_sPlayerClass.y));
                     obj.Add(new JProperty("position", Node.sPlayerGO_sPlayerClass.position));
-                    ServerController.sendMessage(obj);
+                    Node.sServerControllerGO_sServerControllerClass.sendMessage(obj);
                 }
 
                 if (!joystick) {

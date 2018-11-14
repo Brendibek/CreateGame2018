@@ -75,7 +75,7 @@ public class Map : MonoBehaviour {
                     break;
                 }
         }
-        ServerController.sendMessage(obj);
+        Node.sServerControllerGO_sServerControllerClass.sendMessage(obj);
     }
 
     public void updateVisibleBlocks() {

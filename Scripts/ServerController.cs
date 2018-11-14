@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Net.NetworkInformation;
+
 public class ServerController : MonoBehaviour {
     public GameObject playerGO;
     public GameObject otherPlayerGO;
@@ -25,6 +27,8 @@ public class ServerController : MonoBehaviour {
 
     string serverMessage = string.Empty;
 
+
+
     void Awake(){
         //инициализация масивов
         playersInCells = new List<GameObject>[Node.sMapGO_sMapClass.mapWidth, Node.sMapGO_sMapClass.mapHeight];
@@ -33,39 +37,51 @@ public class ServerController : MonoBehaviour {
             for (int j = 0; j < playersInCells.GetLength(1); j++)
                 playersInCells[i, j] = new List<GameObject>();
 
-        try {
-            //client = new TcpClient ("127.0.0.1", 4000);
-            client = new TcpClient("109.234.38.91", 4000);
-            serverIsConnected = true;
-        }
-        catch {
-            Node.sLoadCameraGO_TextGO.text = "Попытка подключиться к серверу не удалась.";
-        }
+        connect();
     }
 
-    void Start () {
-        if (serverIsConnected) {
-            stream = client.GetStream();
-            reader = new StreamReader(stream);
-            writer = new StreamWriter(stream);
+    void connect() {
+        try {
+            client = new TcpClient();
+            //client = new TcpClient ("127.0.0.1", 4000);
+            client.Connect("109.234.38.91", 4000);
+            reader = new StreamReader(client.GetStream());
+            writer = new StreamWriter(client.GetStream());
             writer.AutoFlush = true;
+            serverIsConnected = true;
 
-            new Thread(new ThreadStart(serverListener)).Start();
+            threadListener = new Thread(new ThreadStart(serverListener));
+            threadListener.Start();
 
             JObject obj = new JObject();
             obj.Add(new JProperty("id", Operation.auth));
             obj.Add(new JProperty("name", "player" + Random.Range(0, 100)));
             sendMessage(obj);
         }
-	}
+        catch {
+            Node.sLoadCameraGO_TextGO.text = "Попытка подключиться к серверу не удалась.";
+        }
+    }
+
+    void disconnect() {
+        reader.Close();
+        writer.Close();
+        serverIsConnected = false;
+        threadListener.Abort();
+        Destroy(Node.sGO);
+    }
 
     void serverListener() {
         while (true) if (serverMessage.Length == 0) serverMessage = reader.ReadLine();
     }
 
     void Update() {
-        if (serverMessage.Length != 0) {
-            try {
+        if (Application.internetReachability == NetworkReachability.NotReachable) {
+            Debug.Log("Error. Check internet connection!");
+        }
+        try {
+
+            if (serverMessage.Length != 0) {
                 JObject objFromServer = JObject.Parse(serverMessage);
                 int messageId = (int)objFromServer.GetValue("id");
                 switch (messageId) {
@@ -165,19 +181,23 @@ public class ServerController : MonoBehaviour {
                         }
                 }
             }
-            catch { }
             serverMessage = string.Empty;
+        }
+        catch {
+            Node.sLoadCameraGO.SetActive(true);
+            Node.sLoadCameraGO_TextGO.text = "Связь с сервером потеряна.";
+            disconnect();
         }
     }
 
-    public static void sendMessage(JObject obj) {
+    public void sendMessage(JObject obj) {
         try {
             string message = obj.ToString(Formatting.None);
             writer.WriteLine(message);
-        } catch {
+        } catch {   
             Node.sLoadCameraGO.SetActive(true);
             Node.sLoadCameraGO_TextGO.text = "Связь с сервером потеряна.";
-            Destroy(Node.sGO);
+            disconnect();
             //TODO функция переподключения
         }
     }
@@ -192,10 +212,7 @@ public class ServerController : MonoBehaviour {
     }
 
     void OnApplicationQuit() {
-        if (serverIsConnected) {
-            reader.Close();
-            writer.Close();
-        }
+        disconnect();
         Application.Quit();
     }
 
